@@ -75,7 +75,7 @@ fn test_playthrough() {
     world.grant_owner(player2, 0);
 
     // Set the players commitments
-    let player_1_commit: u8 = ROCK;
+    let player_1_commit: u8 = SCISSORS;
     let player_2_commit: u8 = PAPER;
 
     // Set the player's secret salt. For the test its just different, client will send truly random
@@ -122,9 +122,8 @@ fn test_playthrough() {
         player_2_salt
     );
 
-    // Event with winner?
+    // TODO Event with winner?
 
-    // Game resets
 
 
 

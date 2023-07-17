@@ -13,7 +13,7 @@ mod commit {
     use dojo_rps::components::player::Player;
 
     use dojo_rps::constants::{
-        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1
+        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1,GAME_MAX_DURATION
     };
 
     use dojo_rps::utils::random;
@@ -33,23 +33,36 @@ mod commit {
             game.player1 = player_id;
             game.player1_hash = hashed_commit;
             game.state = STATE_COMMIT_1;
+            game.started_timestamp = starknet::get_block_timestamp();
 
         }else if game.state == STATE_COMMIT_1 {
-            // Check if the same player is not committing again
-            if game.player1 == player_id {
-                // TODO error
-                return;
-            }
+
+            // Ensure the second player is different
+            assert(game.player1 != player_id, 'Player cannot commit twice');
 
             // Commitment for player 2
             game.player2 = player_id;
             game.player2_hash = hashed_commit;
             game.state = STATE_COMMIT_2;
 
-        }else{
-            // check if the round expired
-            let ts = starknet::get_block_timestamp();
         }
+
+        // Store the Game
+        set !(
+            ctx.world,
+            game_id.into(),
+            (Game {
+                game_id: game.game_id,
+                state: game.state,
+                player1: game.player1,
+                player2: game.player2,
+                player1_hash: game.player1_hash,
+                player2_hash: game.player2_hash,
+                player1_commit: game.player1_commit,
+                player2_commit: game.player2_commit,
+                started_timestamp: game.started_timestamp
+            })
+        );
 
     }
 }

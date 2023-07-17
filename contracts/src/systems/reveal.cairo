@@ -1,5 +1,7 @@
 #[system]
 mod reveal {
+    use debug::PrintTrait;
+
     use array::ArrayTrait;
     use box::BoxTrait;
     use traits::{Into, TryInto};
@@ -12,7 +14,7 @@ mod reveal {
     use poseidon::poseidon_hash_span;
 
     use dojo_rps::constants::{
-        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1
+        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1, ROCK, PAPER, SCISSORS
     };
 
     use dojo_rps::utils::random;
@@ -32,6 +34,24 @@ mod reveal {
         committed_hash == computed_hash
     }
 
+    fn decide(player1_commit: u8, player2_commit: u8) -> u8 {
+        if player1_commit == ROCK && player2_commit == PAPER {
+            2
+        }else if player1_commit == PAPER && player2_commit == ROCK {
+            1
+        }else if player1_commit == ROCK && player2_commit == SCISSORS {
+            1
+        }else if player1_commit == SCISSORS && player2_commit == ROCK {
+            2
+        }else if player1_commit == SCISSORS && player2_commit == PAPER {
+            1
+        }else if player1_commit == PAPER && player2_commit == SCISSORS {
+            2
+        }else{
+            0
+        }
+    }
+
     fn execute(
         ctx: Context,
         game_id: u32,
@@ -41,29 +61,69 @@ mod reveal {
     ) -> () {
 
         // Retrieve Game and Player
-        let game = get !(ctx.world, game_id.into(), Game);
+        let mut game = get !(ctx.world, game_id.into(), Game);
         let player_id: felt252 = ctx.origin.into();
 
-        // Retrieve player's committed hash
+
+        // Make sure the gamestate is ready for revealing
+        assert(game.state != STATE_COMMIT_2 || game.state != STATE_REVEAL_1, 'Cannot reveal now');
+
+        // Make sure the player is valid
+        assert(player_id == game.player1 || player_id == game.player2, 'Invalid player');
+
+        // Its either player1 or player2 revealing now
+        if game.player1 == player_id {
+            assert(validate_commit(game.player1_hash, commit, salt), 'Wrong hash for player1');
+            game.player1_commit = commit;
+        }else if game.player2 == player_id {
+            assert(validate_commit(game.player2_hash, commit, salt), 'Wrong hash for player2');
+            game.player2_commit = commit;
+
+        }
 
 
-        // The first player reveals
-        if game.state == STATE_COMMIT_2 {
-            if validate_commit(hashed_commit, commit, salt) {
-                // - game.reveal[player] = commit
-                // - game.state = reveal1
-            }else{
-                // OH NO, THE HASH IS WRONG!!!
-                // This is not supposed to happen of course
+        // We can now decide the winner
+        if game.state == STATE_REVEAL_1  {
+            let winner = decide(game.player1_commit, game.player2_commit);
+            winner.print();
+            if winner == 0 {
+                // TODO emit event for "Draw"
+            } else if winner == 1 {
+                // TODO emit event for Player1 wins
+            }else if winner == 2 {
+                // TODO emit event for Player2 wins
             }
 
-        // The second player reveals
-        }else if game.state == STATE_REVEAL_1 {
-            // - verify commit+salt = game.commit[player]
-            // - determineWinner(reveal1, reveal2)
-            // - gamedecided event
-        }else{
-            // error
+            // Reset the game
+            game.state = STATE_IDLE;
+            game.player1 = 0;
+            game.player2 = 0;
+            game.player1_hash = 0;
+            game.player2_hash = 0;
+            game.player1_commit = 0;
+            game.player2_commit = 0;
+            game.started_timestamp = 0;
+
+        }else {
+            game.state = STATE_REVEAL_1
+
         }
+
+        // Store the Game
+        set !(
+            ctx.world,
+            game_id.into(),
+            (Game {
+                game_id: game.game_id,
+                state: game.state,
+                player1: game.player1,
+                player2: game.player2,
+                player1_hash: game.player1_hash,
+                player2_hash: game.player2_hash,
+                player1_commit: game.player1_commit,
+                player2_commit: game.player2_commit,
+                started_timestamp: game.started_timestamp
+            })
+        );
     }
 }
