@@ -16,7 +16,7 @@ mod create_game {
     use dojo_rps::utils::random;
 
     fn execute(
-        ctx: Context, max_round_seconds: u64
+        ctx: Context
     ) -> (u32, felt252) {
         let player_id: felt252 = ctx.origin.into();
 
