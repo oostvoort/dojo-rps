@@ -3,10 +3,3 @@ struct Player {
     wins: u32
 }
 
-trait PlayerTrait {
-
-}
-
-impl PlayerImpl of PlayerTrait {
-
-}

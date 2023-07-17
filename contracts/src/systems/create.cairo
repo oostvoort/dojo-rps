@@ -1,5 +1,5 @@
 #[system]
-mod create_game {
+mod create {
     use array::ArrayTrait;
     use box::BoxTrait;
     use traits::{Into, TryInto};
@@ -16,11 +16,12 @@ mod create_game {
     use dojo_rps::utils::random;
 
     fn execute(
-        ctx: Context
+        ctx: Context,
     ) -> (u32, felt252) {
-        let player_id: felt252 = ctx.origin.into();
 
         let game_id = ctx.world.uuid();
+        let player_id: felt252 = ctx.origin.into();
+
 
         // game entity
         set !(
@@ -29,17 +30,13 @@ mod create_game {
             (Game {
                 game_id,
                 state: STATE_IDLE,
-                creator: player_id,
+                player1: 0,
+                player2: 0,
+                player1_hash: 0,
+                player2_hash: 0,
+                player1_commit: 0,
+                player2_commit: 0
             })
-        );
-
-        // player entity
-        set !(
-            ctx.world,
-            (game_id, player_id).into(),
-            (
-                Player { wins: 0 }
-            )
         );
 
 

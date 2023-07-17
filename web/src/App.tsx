@@ -6,39 +6,35 @@ import {Utils} from '@dojoengine/core';
 
 function App() {
     const {
-        systemCalls: {spawn, move},
-        components: {Moves, Position},
+        systemCalls: {create, commit, reveal, reset},
+        components: {Game, Player},
     } = useDojo();
 
 
-    const entityId = BigInt(import.meta.env.VITE_ENTITY_ID);
-    const position = useComponentValue(Position, Utils.getEntityIdFromKeys([entityId]));
-    const moves = useComponentValue(Moves, Utils.getEntityIdFromKeys([entityId]));
+    // const entityId = BigInt(import.meta.env.VITE_ENTITY_ID);
+    // const position = useComponentValue(Player, Utils.getEntityIdFromKeys([entityId]));
+    // const moves = useComponentValue(Player, Utils.getEntityIdFromKeys([entityId]));
 
 
     return (
         <>
             <div className="card">
-                <button onClick={() => spawn()}>Spawn</button>
+                <button onClick={() => create()}>Create</button>
             </div>
             <div className="card">
-                <button onClick={() => move(Direction.Left)}>Move Left</button>
+                <button onClick={() => commit()}>Commit</button>
             </div>
             <div className="card">
-                <button onClick={() => move(Direction.Right)}>Move Right</button>
+                <button onClick={() => reveal()}>Reveal</button>
             </div>
             <div className="card">
-                <button onClick={() => move(Direction.Up)}>Move Up</button>
+                <button onClick={() => reset()}>Reset</button>
             </div>
-            <div className="card">
-                <button onClick={() => move(Direction.Down)}>Move Down</button>
-            </div>
-            <div className="card">
-                <div>Moves Remaining: {moves ? `${moves['remaining']}` : 'Need to Spawn'}</div>
-            </div>
-            <div className="card">
-                <div>Position: {position ? `${position['x']}, ${position['y']}` : 'Need to Spawn'}</div>
-            </div>
+
+            {/*<div className="card">*/}
+            {/*    <div>Moves Remaining: {moves ? `${moves['remaining']}` : 'Need to Spawn'}</div>*/}
+            {/*</div>*/}
+
         </>
     );
 }
