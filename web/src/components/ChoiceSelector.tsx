@@ -72,6 +72,7 @@ const ChoiceSelector = () => {
         commits.map(({label, value}) => {
           return (
             <Choice
+              disabled={option !== 0}
               key={value}
               image={`icon_${label}.png`}
               handSign={label}
