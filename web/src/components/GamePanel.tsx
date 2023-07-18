@@ -59,7 +59,10 @@ export default function GamePanel() {
                     <div className={'mt-8'}>
                         <p className={'text-option-2 text-[20px] font-noto text-center mb-4'}>Opponent Choice</p>
                         {opponentChoice === 0 && <Choice image={'icon_questionMark.png'} />}
-                        {opponentChoice !== 0 && <Choice image={`icon_${commits[opponentChoice].toLowerCase()}.png`} />}
+                        {opponentChoice !== 0 && <Choice
+                          image={`icon_${commits[opponentChoice].toLowerCase()}.png`}
+                          handSign={commits[opponentChoice]}
+                        />}
                     </div>
                     <div>
                         <div className={'mb-4 text-center'}>
