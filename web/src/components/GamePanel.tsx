@@ -3,12 +3,10 @@ import clsx from "clsx";
 import Choice from "./Choice.tsx";
 import useSaltGenerator from "../hooks/useSaltGenerator";
 import {useDojo} from "../DojoContext";
-import {commits} from "../global/constants";
+import {commits, GAME_ID} from "../global/constants";
 import {poseidonHashMany} from "micro-starknet";
 import {useComponentValue} from "@dojoengine/react";
 import {Utils} from "@dojoengine/core";
-
-const gameId = 0
 
 export default function GamePanel() {
     const [selectedChoice, setSelectedChoice] = React.useState<string | null>(null)
@@ -22,15 +20,26 @@ export default function GamePanel() {
     const { salt, changeSalt } = useSaltGenerator()
 
     const handleSelectedChoice = (choice: string) => {
+        if (selectedChoice) return
+        changeSalt()
         const index = commits.findIndex(commit => choice === commit)
         const hashedCommit = poseidonHashMany([BigInt(index), BigInt(salt)])
-        commit(gameId, hashedCommit).then()
+        commit(GAME_ID, hashedCommit).then()
+        setSelectedChoice(choice)
     }
 
-    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(gameId)]))
-    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?player1 ?? 0)]))
+    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
+    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player1 ?? 0)]))
     const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
-    console.log(game)
+
+    const isUserPlayer1 = BigInt(game?.player1 ?? 0) === BigInt(signer.address)
+
+    const player1Choice = game?.player1_commit ?? 0
+    const player2Choice = game?.player2_commit ?? 0
+
+    const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
+
+    const gameStatus = game?.state ?? 0
 
     return (
         <React.Fragment>
@@ -48,7 +57,8 @@ export default function GamePanel() {
                 <div className={'flex flex-col items-center w-full h-full gap-5'}>
                     <div className={'mt-8'}>
                         <p className={'text-option-2 text-[20px] font-noto text-center mb-4'}>Opponent Choice</p>
-                        <Choice image={'icon_questionMark.png'} />
+                        {opponentChoice === 0 && <Choice image={'icon_questionMark.png'} />}
+                        {opponentChoice !== 0 && <Choice image={`icon_${commits[opponentChoice].toLowerCase()}.png`} />}
                     </div>
                     <div>
                         <div className={'mb-4 text-center'}>

@@ -10,7 +10,7 @@ mod reset {
     use dojo_rps::components::player::Player;
 
     use dojo_rps::constants::{
-        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1, GAME_MAX_DURATION
+        STATE_IDLE,STATE_COMMIT_1,STATE_COMMIT_2,STATE_REVEAL_1,STATE_DECIDED, GAME_MAX_DURATION
     };
 
     use dojo_rps::utils::random;
@@ -29,7 +29,8 @@ mod reset {
 
         // Error if the game is not expired
         assert(
-             (time_now - game.started_timestamp) > GAME_MAX_DURATION,
+             (time_now - game.started_timestamp) > GAME_MAX_DURATION ||
+             game.state == STATE_DECIDED,
             'Game not expired'
         );
 
