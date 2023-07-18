@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import clsx from "clsx";
 import Choice from "./Choice.tsx";
 import useSaltGenerator from "../hooks/useSaltGenerator";
@@ -7,11 +7,17 @@ import {commits} from "../global/constants";
 import {poseidonHashMany} from "micro-starknet";
 import {useComponentValue} from "@dojoengine/react";
 import {Utils} from "@dojoengine/core";
+import useLogs from "../hooks/useLogs.tsx";
 
 const gameId = 0
 
 export default function GamePanel() {
     const [selectedChoice, setSelectedChoice] = React.useState<string | null>(null)
+    const [remainingTime, setRemainingTime] = useState<number>(0)
+    const {
+        battleLogs,
+        totalGames,
+    } = useLogs()
 
     const {
         systemCalls: { commit },
@@ -24,13 +30,40 @@ export default function GamePanel() {
     const handleSelectedChoice = (choice: string) => {
         const index = commits.findIndex(commit => choice === commit)
         const hashedCommit = poseidonHashMany([BigInt(index), BigInt(salt)])
-        commit(gameId, hashedCommit).then()
+        commit(gameId, hashedCommit).then((res) => {
+            console.log("COMMIT RESPONSE: ", res)
+        })
     }
 
     const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(gameId)]))
-    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?player1 ?? 0)]))
+    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player1 ?? 0)]))
     const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
-    console.log(game)
+
+    console.log('game: ', game)
+    console.log('player 1: ', player1)
+    console.log('player 2: ', player2)
+    console.log("signer: ", signer)
+    console.log("salt: ", salt)
+
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            const currentTime = Math.floor(Date.now() / 1000)
+            const timeDifference = (game?.started_timestamp ? game?.started_timestamp + 20000 : 1689665128) - currentTime
+
+            if (timeDifference > 0) {
+                setRemainingTime(timeDifference)
+            } else {
+                setRemainingTime(0)
+                clearInterval(interval)
+            }
+        }, 1000)
+
+        return () => {
+            clearInterval(interval)
+        }
+
+
+    }, [game?.started_timestamp])
 
     return (
         <React.Fragment>
@@ -53,7 +86,7 @@ export default function GamePanel() {
                     <div>
                         <div className={'mb-4 text-center'}>
                             <p className={'text-option-1 text-[28px] font-noto'}>Choose your hand</p>
-                            <p className={'text-option-2 text-[18px] font-noto'}>Times up in 9...</p>
+                            <p className={'text-option-2 text-[18px] font-noto'}>Times up in {remainingTime}...</p>
                             {/*<p className={'text-option-2 text-[36px] font-oswald'}>YOU WIN!</p>*/}
                         </div>
                         <div className={'flex gap-20'}>
@@ -83,21 +116,26 @@ export default function GamePanel() {
                 <div className={'p-8 rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
                     <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>\
                     {/* TODO: keep track of total games played in use state*/}
-                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: 9</p>
+                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: {totalGames}</p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
                         {/* TODO: hook up player1 wins*/}
-                        Player1 : <span className={'text-option-1 ml-1'}>3 Wins</span>
+                        Player1 : <span className={'text-option-1 ml-1'}>{player1?.wins ?? 0} Wins</span>
                     </p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
                         {/* TODO: hook up player2 wins*/}
-                        Player2 : <span className={'text-option-1 ml-1'}>6 Wins</span>
+                        Player2 : <span className={'text-option-1 ml-1'}>{player2?.wins ?? 0} Wins</span>
                     </p>
                 </div>
                 <div className={'p-8 h-full rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
                     <p className={'text-[36px] text-option-2 font-oswald mb-2'}>History</p>
                     {/* TODO: store wins in useState */}
-                    <p className={'text-[18px] text-option-1 font-noto'}>Player 1 won with Rock </p>
-                    <p className={'text-[18px] text-option-1 font-noto'}>Player 2 won with Scissors</p>
+                    {
+                        battleLogs.length > 0 && battleLogs.map((data, index) => {
+                            return (
+                                <p key={index} className={'text-[18px] text-option-1 font-noto'}>Player {data.player} won with {data.selectedChoice} </p>
+                            )
+                        })
+                    }
                 </div>
             </div>
         </React.Fragment>
