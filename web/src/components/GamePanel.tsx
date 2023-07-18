@@ -14,7 +14,7 @@ export default function GamePanel() {
 
     const {
         systemCalls: { commit },
-        components: { Game, Player },
+        components: { Game },
         network: { signer }
     } = useDojo()
 
@@ -30,8 +30,6 @@ export default function GamePanel() {
     }
 
     const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
-    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player1 ?? 0)]))
-    const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
 
     const isUserPlayer1 = BigInt(game?.player1 ?? 0) === BigInt(signer.address)
 
