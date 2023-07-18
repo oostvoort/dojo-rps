@@ -1,8 +1,9 @@
 import './App.css';
 import {useDojo} from './DojoContext';
-import {useComponentValue} from "@dojoengine/react";
+import {useComponentValue, useEntityQuery} from "@dojoengine/react";
 import {Direction} from './dojo/createSystemCalls'
 import {Utils} from '@dojoengine/core';
+import {Has} from "@latticexyz/recs";
 
 function App() {
     const {
@@ -22,13 +23,13 @@ function App() {
                 <button onClick={() => create()}>Create</button>
             </div>
             <div className="card">
-                <button onClick={() => commit()}>Commit</button>
+                {/*<button onClick={() => commit()}>Commit</button>*/}
             </div>
             <div className="card">
-                <button onClick={() => reveal()}>Reveal</button>
+                {/*<button onClick={() => reveal()}>Reveal</button>*/}
             </div>
             <div className="card">
-                <button onClick={() => reset()}>Reset</button>
+                {/*<button onClick={() => reset()}>Reset</button>*/}
             </div>
 
             {/*<div className="card">*/}
