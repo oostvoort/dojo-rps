@@ -37,8 +37,6 @@ const useLogs = () => {
     return {
         battleLogs,
         totalGames,
-        setTotalGames,
-        setBattleLogs
     }
 }
 

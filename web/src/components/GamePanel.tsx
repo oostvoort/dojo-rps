@@ -5,19 +5,14 @@ import {useDojo} from "../DojoContext";
 import {commits, GAME_ID} from "../global/constants";
 import {useComponentValue} from "@dojoengine/react";
 import {Utils} from "@dojoengine/core";
-import useLogs from "../hooks/useLogs.tsx";
 import useGameStatus from "../hooks/useGameStatus";
 import Timer from "./Timer";
 import ChoiceSelector from "./ChoiceSelector";
+import StatsPanel from "./StatsPanel";
 
 export default function GamePanel() {
     const {
-        battleLogs,
-        totalGames,
-    } = useLogs()
-
-    const {
-        components: { Game, Player },
+        components: { Game },
         network: { signer }
     } = useDojo()
 
@@ -32,8 +27,6 @@ export default function GamePanel() {
     const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
 
     const statusText = useGameStatus()
-    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player1 ?? 0)]))
-    const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
 
     return (
         <React.Fragment>
@@ -69,29 +62,7 @@ export default function GamePanel() {
                 </div>
             </div>
             <div className={'flex flex-col gap-6 w-3/12'}>
-                <div className={'p-8 rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
-                    <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>
-                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: {totalGames}</p>
-                    <p className={'text-[20px] text-option-2 font-bold'}>
-                        Player1 : <span className={'text-option-1 ml-1'}>{player1?.wins ?? 0} Wins</span>
-                    </p>
-                    <p className={'text-[20px] text-option-2 font-bold'}>
-                        Player2 : <span className={'text-option-1 ml-1'}>{player2?.wins ?? 0} Wins</span>
-                    </p>
-                </div>
-                <div className={'p-8 h-full rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
-                    <p className={'text-[36px] text-option-2 font-oswald mb-2'}>History</p>
-                    {
-                        battleLogs.length > 0 && battleLogs.map((data, index) => {
-                            if (data.player === "0") return (
-                              <p key={index} className={'text-[18px] text-option-1 font-noto'}>Draw! Both players chose {data.selectedChoice} </p>
-                            )
-                            return (
-                                <p key={index} className={'text-[18px] text-option-1 font-noto'}>Player {data.player} won with {data.selectedChoice} </p>
-                            )
-                        })
-                    }
-                </div>
+                <StatsPanel />
             </div>
         </React.Fragment>
     )
