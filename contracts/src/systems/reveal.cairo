@@ -86,6 +86,7 @@ mod reveal {
         if game.state == STATE_REVEAL_1  {
             let winner = decide(game.player1_commit, game.player2_commit);
             winner.print();
+            game.winner = winner;
             if winner == 0 {
                 // TODO emit event for "Draw"
             } else if winner == 1 {
@@ -115,7 +116,8 @@ mod reveal {
                 player2_hash: game.player2_hash,
                 player1_commit: game.player1_commit,
                 player2_commit: game.player2_commit,
-                started_timestamp: game.started_timestamp
+                started_timestamp: game.started_timestamp,
+                winner: game.winner
             })
         );
     }

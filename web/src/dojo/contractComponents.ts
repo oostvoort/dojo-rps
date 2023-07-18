@@ -18,6 +18,7 @@ export function defineContractComponents(world: World) {
           player1_commit: RecsType.Number,
           player2_commit: RecsType.Number,
           started_timestamp: RecsType.Number,
+          winner: RecsType.Number,
         },
         {
           metadata: {

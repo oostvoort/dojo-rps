@@ -43,6 +43,7 @@ mod reset {
         game.player1_commit = 0;
         game.player2_commit = 0;
         game.started_timestamp = 0;
+        game.winner = 0;
 
 
         // Store the Game
@@ -58,7 +59,8 @@ mod reset {
                 player2_hash: game.player2_hash,
                 player1_commit: game.player1_commit,
                 player2_commit: game.player2_commit,
-                started_timestamp: game.started_timestamp
+                started_timestamp: game.started_timestamp,
+                winner: game.winner
             })
         );
 

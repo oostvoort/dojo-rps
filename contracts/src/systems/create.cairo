@@ -36,7 +36,8 @@ mod create {
                 player2_hash: 0,
                 player1_commit: 0,
                 player2_commit: 0,
-                started_timestamp: 0
+                started_timestamp: 0,
+                winner: 0
             })
         );
 
