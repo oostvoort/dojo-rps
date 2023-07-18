@@ -18,15 +18,17 @@ To create an onchain game version of rock paper scissors require the following:
 2. a way to choose without divulging the choice to the opponent
 3. a way to reveal the choices by both players to determine the winner
 
-## Game Phases 
+## Game States 
 
 Because this version of rock paper scissors happens over the blockchain, it would not be feasible
 to actually simultaneously choose an option, reveal it, then keep score. As such, the author separated
-the game into different phases:
+the game into different states:
 
-1. Start Phase - in this phase, a player waits for another player to join in
-2. Choosing Phase - in this phase, both players choose an option
-3. Reveal Phase - in this phase, the options chosen are revealed, and a winner is determined
+1. Idle State - in this phase, a player waits for another player to join in
+2. Commit 1 State - in this phase, someone has chosen an option
+3. Commit 2 State - in this phase, both have chosen options
+4. Reveal 1 State - in this phase, a player has revealed his or her option
+5. Decided State - in this phase, both players have revealed their options
 
 ## Entities
 
