@@ -26,10 +26,10 @@ export default function Choice({ image, handSign, isSelected, onSelect }: PropTy
                 className={clsx(
                     'flex justify-center items-center',
                     'h-[183px] w-[183px]',
-                    'rounded-full border-4 border-option-4',
+                    'rounded-full',
                     'bg-option-6',
                     `${handSign ? 'cursor-pointer' : ''}`,
-                    { 'border-option-2': isSelected },
+                    { 'border-4': isSelected },
                 )}
                 onClick={handleClick}
             >
