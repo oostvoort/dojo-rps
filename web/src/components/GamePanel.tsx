@@ -10,7 +10,7 @@ import {Utils} from "@dojoengine/core";
 import useLogs from "../hooks/useLogs.tsx";
 import useGameStatus from "../hooks/useGameStatus";
 
-const gameId = 0
+// const gameId = 0
 
 export default function GamePanel() {
     const [selectedChoice, setSelectedChoice] = React.useState<string | null>(null)
@@ -22,7 +22,7 @@ export default function GamePanel() {
 
     const {
         systemCalls: { commit },
-        components: { Game },
+        components: { Game, Player },
         network: { signer }
     } = useDojo()
 
@@ -133,7 +133,7 @@ export default function GamePanel() {
                 <div className={'p-8 rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
                     <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>\
                     {/* TODO: keep track of total games played in use state*/}
-                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: 9</p>
+                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: {totalGames}</p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
                         {/* TODO: hook up player1 wins*/}
                         Player1 : <span className={'text-option-1 ml-1'}>{player1?.wins ?? 0} Wins</span>
