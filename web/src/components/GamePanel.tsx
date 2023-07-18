@@ -3,11 +3,12 @@ import clsx from "clsx";
 import Choice from "./Choice.tsx";
 import useSaltGenerator from "../hooks/useSaltGenerator";
 import {useDojo} from "../DojoContext";
-import {commits} from "../global/constants";
+import {commits, GAME_ID} from "../global/constants";
 import {poseidonHashMany} from "micro-starknet";
 import {useComponentValue} from "@dojoengine/react";
 import {Utils} from "@dojoengine/core";
 import useLogs from "../hooks/useLogs.tsx";
+import useGameStatus from "../hooks/useGameStatus";
 
 const gameId = 0
 
@@ -21,21 +22,33 @@ export default function GamePanel() {
 
     const {
         systemCalls: { commit },
-        components: { Game, Player },
+        components: { Game },
         network: { signer }
     } = useDojo()
 
     const { salt, changeSalt } = useSaltGenerator()
 
     const handleSelectedChoice = (choice: string) => {
+        if (selectedChoice) return
+        changeSalt()
         const index = commits.findIndex(commit => choice === commit)
         const hashedCommit = poseidonHashMany([BigInt(index), BigInt(salt)])
-        commit(gameId, hashedCommit).then((res) => {
+        commit(GAME_ID, hashedCommit).then((res) => {
             console.log("COMMIT RESPONSE: ", res)
         })
+        setSelectedChoice(choice)
     }
 
-    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(gameId)]))
+    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
+
+    const isUserPlayer1 = BigInt(game?.player1 ?? 0) === BigInt(signer.address)
+
+    const player1Choice = game?.player1_commit ?? 0
+    const player2Choice = game?.player2_commit ?? 0
+
+    const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
+
+    const statusText = useGameStatus()
     const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player1 ?? 0)]))
     const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
 
@@ -75,13 +88,17 @@ export default function GamePanel() {
                 )}>
                     <p className={'text-[36px] text-option-2 font-oswald'}>
                         {/* put in status here based on game.status */}
-                        Status : <span className={'text-[28px] text-option-1 font-noto'}>Playing, waiting for Player2</span>
+                        Status : <span className={'text-[28px] text-option-1 font-noto'}>{statusText}</span>
                     </p>
                 </div>
                 <div className={'flex flex-col items-center w-full h-full gap-5'}>
                     <div className={'mt-8'}>
                         <p className={'text-option-2 text-[20px] font-noto text-center mb-4'}>Opponent Choice</p>
-                        <Choice image={'icon_questionMark.png'} />
+                        {opponentChoice === 0 && <Choice image={'icon_questionMark.png'} />}
+                        {opponentChoice !== 0 && <Choice
+                          image={`icon_${commits[opponentChoice].toLowerCase()}.png`}
+                          handSign={commits[opponentChoice]}
+                        />}
                     </div>
                     <div>
                         <div className={'mb-4 text-center'}>
@@ -116,7 +133,7 @@ export default function GamePanel() {
                 <div className={'p-8 rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
                     <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>\
                     {/* TODO: keep track of total games played in use state*/}
-                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: {totalGames}</p>
+                    <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: 9</p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
                         {/* TODO: hook up player1 wins*/}
                         Player1 : <span className={'text-option-1 ml-1'}>{player1?.wins ?? 0} Wins</span>

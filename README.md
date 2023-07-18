@@ -201,3 +201,7 @@ cd web
 yarn dev
 ```
 
+### Step 8: Create initial game
+````console
+make ecs_exe s=create
+````
