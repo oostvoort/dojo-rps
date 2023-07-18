@@ -103,12 +103,115 @@
       ]
     },
     {
-      "name": "library_call",
+      "name": "GrantAuthRole",
       "inputs": [
         {
-          "name": "self",
-          "type": "@dojo::world::library_call::ContractState"
+          "name": "target_id",
+          "type": "core::felt252"
+        }
+      ],
+      "outputs": [],
+      "class_hash": "0x768beb31333d6781dbeaa70c1a5d3221ae4ed17eb6b17a1fa19d96c3e025946",
+      "dependencies": [
+        {
+          "name": "AuthRole",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "GrantScopedAuthRole",
+      "inputs": [
+        {
+          "name": "target_id",
+          "type": "core::felt252"
         },
+        {
+          "name": "role_id",
+          "type": "core::felt252"
+        }
+      ],
+      "outputs": [],
+      "class_hash": "0x537235143cdb5fe8ec0bdb2b3e97d27eef6e536446654779a4935634bdb57e9",
+      "dependencies": [
+        {
+          "name": "AuthRole",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "GrantResource",
+      "inputs": [
+        {
+          "name": "role_id",
+          "type": "core::felt252"
+        }
+      ],
+      "outputs": [],
+      "class_hash": "0x272736ada8dccacb138f76af01973f980f6807a65de4f2598d821cfb9c771a3",
+      "dependencies": [
+        {
+          "name": "AuthStatus",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "RevokeAuthRole",
+      "inputs": [],
+      "outputs": [],
+      "class_hash": "0xf1d8ab7371b9da5bf50d2d4905fa380b712de471bd0575e6130900987fdc1c",
+      "dependencies": [
+        {
+          "name": "AuthRole",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "RevokeScopedAuthRole",
+      "inputs": [
+        {
+          "name": "target_id",
+          "type": "core::felt252"
+        }
+      ],
+      "outputs": [],
+      "class_hash": "0x421aa25eb22cc52ce9180a81e1008d83842ddc0ff38278a2f1dfc8597551fb3",
+      "dependencies": [
+        {
+          "name": "AuthRole",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "RevokeResource",
+      "inputs": [
+        {
+          "name": "role_id",
+          "type": "core::felt252"
+        }
+      ],
+      "outputs": [],
+      "class_hash": "0x24d00372ab29264599822b09a43e651d82f941aaefd86fe2232e48ebabcde15",
+      "dependencies": [
+        {
+          "name": "AuthStatus",
+          "read": false,
+          "write": true
+        }
+      ]
+    },
+    {
+      "name": "LibraryCall",
+      "inputs": [
         {
           "name": "class_hash",
           "type": "core::starknet::class_hash::ClassHash"
@@ -123,7 +226,7 @@
           "type": "core::array::Span::<core::felt252>"
         }
       ],
-      "class_hash": "0x68db745e776a934ba464f98c2286844df8c56eda78a0911f0971f7081b26d21",
+      "class_hash": "0x912b21a6d10657808535a4f7ef5f3cbbb594df8082925b9694159ff0dab2f",
       "dependencies": []
     }
   ],

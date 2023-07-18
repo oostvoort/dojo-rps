@@ -6,16 +6,6 @@ import clsx from "clsx";
 import GamePanel from "./components/GamePanel.tsx";
 
 function App() {
-    // const {
-    //     systemCalls: {create, commit, reveal, reset},
-    //     components: {Game, Player},
-    // } = useDojo();
-
-
-    // const entityId = BigInt(import.meta.env.VITE_ENTITY_ID);
-    // const position = useComponentValue(Player, Utils.getEntityIdFromKeys([entityId]));
-    // const moves = useComponentValue(Player, Utils.getEntityIdFromKeys([entityId]));
-
 
     return (
        <div className={clsx(

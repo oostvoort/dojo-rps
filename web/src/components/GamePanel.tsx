@@ -1,13 +1,36 @@
 import React from "react";
 import clsx from "clsx";
 import Choice from "./Choice.tsx";
+import useSaltGenerator from "../hooks/useSaltGenerator";
+import {useDojo} from "../DojoContext";
+import {commits} from "../global/constants";
+import {poseidonHashMany} from "micro-starknet";
+import {useComponentValue} from "@dojoengine/react";
+import {Utils} from "@dojoengine/core";
+
+const gameId = 0
 
 export default function GamePanel() {
     const [selectedChoice, setSelectedChoice] = React.useState<string | null>(null)
 
+    const {
+        systemCalls: { commit },
+        components: { Game, Player },
+        network: { signer }
+    } = useDojo()
+
+    const { salt, changeSalt } = useSaltGenerator()
+
     const handleSelectedChoice = (choice: string) => {
-        setSelectedChoice(choice)
+        const index = commits.findIndex(commit => choice === commit)
+        const hashedCommit = poseidonHashMany([BigInt(index), BigInt(salt)])
+        commit(gameId, hashedCommit).then()
     }
+
+    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(gameId)]))
+    const player1 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?player1 ?? 0)]))
+    const player2 = useComponentValue(Player, Utils.getEntityIdFromKeys([BigInt(game?.player2 ?? 0)]))
+    console.log(game)
 
     return (
         <React.Fragment>
@@ -18,6 +41,7 @@ export default function GamePanel() {
                     'bg-option-6'
                 )}>
                     <p className={'text-[36px] text-option-2 font-oswald'}>
+                        {/* put in status here based on game.status */}
                         Status : <span className={'text-[28px] text-option-1 font-noto'}>Playing, waiting for Player2</span>
                     </p>
                 </div>
@@ -57,17 +81,21 @@ export default function GamePanel() {
             </div>
             <div className={'flex flex-col gap-6 w-3/12'}>
                 <div className={'p-8 rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
-                    <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>
+                    <p className={'text-[36px] text-option-2 font-oswald mb-2'}>Stats</p>\
+                    {/* TODO: keep track of total games played in use state*/}
                     <p className={'text-[18px] text-option-1 font-noto mb-1'}>Total Games: 9</p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
+                        {/* TODO: hook up player1 wins*/}
                         Player1 : <span className={'text-option-1 ml-1'}>3 Wins</span>
                     </p>
                     <p className={'text-[20px] text-option-2 font-bold'}>
+                        {/* TODO: hook up player2 wins*/}
                         Player2 : <span className={'text-option-1 ml-1'}>6 Wins</span>
                     </p>
                 </div>
                 <div className={'p-8 h-full rounded-3xl border-2 border-option-5 bg-option-6 text-start'}>
                     <p className={'text-[36px] text-option-2 font-oswald mb-2'}>History</p>
+                    {/* TODO: store wins in useState */}
                     <p className={'text-[18px] text-option-1 font-noto'}>Player 1 won with Rock </p>
                     <p className={'text-[18px] text-option-1 font-noto'}>Player 2 won with Scissors</p>
                 </div>
