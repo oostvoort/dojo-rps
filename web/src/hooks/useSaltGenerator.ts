@@ -1,9 +1,9 @@
-import React from "react";
+import useLocalStorage from "./useLocalStorage";
 
 const RANDOM_ARRAY_LENGTH = 10
 const MAX_RANDOM_NUMBER = 4294967295
 const useSaltGenerator = () => {
-  const [salt, setSalt] = React.useState(0)
+  const [salt, setSalt] = useLocalStorage('RPS_SALT', 0)
   const changeSalt = () => {
     const randomArray: Uint32Array = (new Uint32Array(RANDOM_ARRAY_LENGTH))
       .map(() => Math.floor(Math.random() * MAX_RANDOM_NUMBER))

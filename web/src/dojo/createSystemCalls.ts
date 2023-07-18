@@ -10,14 +10,14 @@ export function createSystemCalls(
         await syncWorker.sync(tx.transaction_hash);
     };
 
-    const commit = async (gameId: number, hashedCommit: number) => {
+    const commit = async (gameId: number, hashedCommit: bigint) => {
         const tx = await execute("commit", [gameId, hashedCommit]);
         await syncWorker.sync(tx.transaction_hash);
     };
 
     const reveal = async (
       gameId: number,
-      hashedCommit: number,
+      hashedCommit: bigint,
       commit: typeof ROCK | typeof PAPER | typeof SCISSORS,
       salt: number
     ) => {
