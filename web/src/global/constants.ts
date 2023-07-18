@@ -14,3 +14,5 @@ export const STATE_COMMIT_2 = 3
 export const STATE_REVEAL_1 = 4
 
 export const STATE_DECIDED = 5
+
+export const GAME_MAX_DURATION = 20000;

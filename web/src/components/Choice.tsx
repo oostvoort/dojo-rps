@@ -4,22 +4,10 @@ type PropType = {
     image: string,
     handSign?: string,
     isSelected?: boolean,
-    onSelect?: (handSign: string) => void,
+    onSelect?: () => void,
 }
 
 export default function Choice({ image, handSign, isSelected, onSelect }: PropType) {
-    const handleClick = () => {
-        if (handSign) {
-            if (onSelect) {
-                if (isSelected) {
-                    onSelect('')
-                } else if (handSign) {
-                    onSelect(handSign)
-                }
-            }
-        }
-    }
-
     return (
         <div className={'flex flex-col gap-2'}>
             <div
@@ -31,11 +19,11 @@ export default function Choice({ image, handSign, isSelected, onSelect }: PropTy
                     `${handSign ? 'cursor-pointer' : ''}`,
                     { 'border-4': isSelected },
                 )}
-                onClick={handleClick}
+                onClick={onSelect}
             >
                 <img src={image} alt={'hand_sign'} draggable={false} />
             </div>
-            <p className={'text-option-2 text-[20px] text-center font-noto'}>{handSign}</p>
+            <p className={'text-option-2 text-[20px] text-center font-noto capitalize'}>{handSign}</p>
         </div>
     )
 }
