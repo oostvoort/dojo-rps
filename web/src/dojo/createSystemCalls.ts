@@ -7,12 +7,12 @@ export function createSystemCalls(
 ) {
     const create = async () => {
         const tx = await execute("create", []);
-        syncWorker.sync(tx.transaction_hash);
+        await syncWorker.sync(tx.transaction_hash);
     };
 
     const commit = async () => {
         const tx = await execute("commit", []);
-        syncWorker.sync(tx.transaction_hash);
+        await syncWorker.sync(tx.transaction_hash);
     };
 
     const reveal = async () => {
