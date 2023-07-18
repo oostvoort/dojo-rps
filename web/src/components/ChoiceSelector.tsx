@@ -61,7 +61,7 @@ const ChoiceSelector = () => {
     reveal(GAME_ID, hashedCommit, option as OptionType, salt).then()
   }, [gameStatus, playerChoice])
 
-  /// reset commit when option is 0
+  /// reset commit when game is idle
   React.useEffect(() => {
     if (gameStatus === STATE_IDLE) setOption(0)
   }, [gameStatus])
