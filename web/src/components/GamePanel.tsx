@@ -7,6 +7,7 @@ import {commits, GAME_ID} from "../global/constants";
 import {poseidonHashMany} from "micro-starknet";
 import {useComponentValue} from "@dojoengine/react";
 import {Utils} from "@dojoengine/core";
+import useGameStatus from "../hooks/useGameStatus";
 
 export default function GamePanel() {
     const [selectedChoice, setSelectedChoice] = React.useState<string | null>(null)
@@ -39,7 +40,7 @@ export default function GamePanel() {
 
     const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
 
-    const gameStatus = game?.state ?? 0
+    const statusText = useGameStatus()
 
     return (
         <React.Fragment>
@@ -51,7 +52,7 @@ export default function GamePanel() {
                 )}>
                     <p className={'text-[36px] text-option-2 font-oswald'}>
                         {/* put in status here based on game.status */}
-                        Status : <span className={'text-[28px] text-option-1 font-noto'}>Playing, waiting for Player2</span>
+                        Status : <span className={'text-[28px] text-option-1 font-noto'}>{statusText}</span>
                     </p>
                 </div>
                 <div className={'flex flex-col items-center w-full h-full gap-5'}>
