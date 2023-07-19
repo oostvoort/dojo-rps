@@ -141,7 +141,7 @@ Follow the steps below to setup and run your first Autonomous World.
 
 Start by installing `dojoup`. This cli tool is a critical component when building with Dojo. It manages dependencies and helps in building your project. Run the following command in your terminal:
 
-```console
+```shell
 curl -L https://install.dojoengine.org | bash
 dojoup
 ```
@@ -152,7 +152,7 @@ The command downloads the `dojoup` installation script and executes it.
 
 The next step is to clone the repository to your local machine. Open your terminal and type the following command:
 
-```console
+```shell
 git clone https://github.com/coostendorp/dojo-web-starter && cd dojo-web-starter
 ```
 
@@ -163,7 +163,7 @@ This command will create a local copy of the Dojo Web Starter repository and ent
 
 With `dojoup` installed, you can now build your example world using the following command:
 
-```console
+```shell
 make build
 ```
 
@@ -173,7 +173,7 @@ This command compiles your project and prepares it for execution.
 
 [Katana RPC](https://book.dojoengine.org/framework/katana/overview.html) is the communication layer for your Dojo World. It allows different components of your world to communicate with each other. To start Katana RPC, use the following command:
 
-```console
+```shell
 katana --allow-zero-max-fee
 ```
 
@@ -181,13 +181,13 @@ katana --allow-zero-max-fee
 
 Finally, deploy your world using the `sozo migrate` command. This command, deploys your world to Katana!
 
-```console
+```shell
 make deploy
 ```
 
 ### Step 6: Get the React frontend ready
 
-```console
+```shell
 make prep_web
 cd web
 yarn
@@ -196,12 +196,16 @@ yarn
 
 ### Step 7: Run the frontend locally
 
-```console
+```shell
 cd web
 yarn dev
 ```
 
 ### Step 8: Create initial game
-````console
+````shell
+make grant_write c=Game s=commit
+make grant_write c=Game s=reset
+make grant_write c=Game s=reveal
+make grant_write c=Player s=reveal
 make ecs_exe s=create
 ````

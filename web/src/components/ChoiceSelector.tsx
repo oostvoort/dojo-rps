@@ -38,7 +38,7 @@ const ChoiceSelector = () => {
   const handleSelectedChoice = (value: number) => {
     if (option) return
     changeSalt()
-    const hashedCommit = poseidonHashMany([BigInt(value), BigInt(salt)])
+    const hashedCommit = poseidonHashMany([BigInt(2), BigInt(value), BigInt(salt)])
     commit(GAME_ID, hashedCommit).then()
     setOption(value)
   }
@@ -57,7 +57,7 @@ const ChoiceSelector = () => {
   React.useEffect(() => {
     if (gameStatus !== STATE_COMMIT_2 && gameStatus !== STATE_REVEAL_1) return
     if (playerChoice) return
-    const hashedCommit = poseidonHashMany([BigInt(option), BigInt(salt)])
+    const hashedCommit = poseidonHashMany([BigInt(2), BigInt(option), BigInt(salt)])
     reveal(GAME_ID, hashedCommit, option as OptionType, salt).then()
   }, [gameStatus, playerChoice])
 

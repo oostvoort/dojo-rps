@@ -48,4 +48,10 @@ loop_tick:
 	sozo execute Update -c 0 --world $$WORLD_ADDR;\
 	wait; done;
 
+# Usage: make grant_write c=Game s=Commit
+grant_write:
+	@WORLD_ADDR=$$(tail -n1 ./last_deployed_world); \
+	cd contracts; echo "sozo auth writer $(s) $(c) --world $$WORLD_ADDR"; \
+	sozo auth writer $(s) $(c) --world $$WORLD_ADDR
+
 
