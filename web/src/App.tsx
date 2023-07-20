@@ -6,10 +6,8 @@ import clsx from "clsx";
 import GamePanel from "./components/GamePanel.tsx";
 import useSyncEvents from "./hooks/useSyncEvents";
 
-
 function App() {
-
-    const syncEvents = useSyncEvents()
+    useSyncEvents()
 
     return (
        <div className={clsx(
@@ -47,7 +45,6 @@ function App() {
                'rounded-3xl border-4 border-option-3',
                'bg-game-panel bg-no-repeat bg-cover',
            )}>
-               <button onClick={() => syncEvents.mutate()}>Sync Events</button>
                <GamePanel />
            </div>
        </div>
