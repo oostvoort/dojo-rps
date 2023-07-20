@@ -1,6 +1,6 @@
 import Choice from "./Choice";
 import {GAME_ID, PAPER, ROCK, SCISSORS, STATE_COMMIT_2, STATE_IDLE, STATE_REVEAL_1} from "../global/constants";
-import React from "react";
+import React, {useEffect} from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {poseidonHashMany} from "micro-starknet";
 import useSaltGenerator from "../hooks/useSaltGenerator";
@@ -34,11 +34,16 @@ const ChoiceSelector = () => {
     network: { signer }
   } = useDojo()
 
+  // change salt when there is no salt currently
+  useEffect(() => {
+    if (salt) return
+    changeSalt()
+  }, [salt])
+
 
   const handleSelectedChoice = (value: number) => {
     if (option) return
-    changeSalt()
-    const hashedCommit = poseidonHashMany([BigInt(2), BigInt(value), BigInt(salt)])
+    const hashedCommit = poseidonHashMany([BigInt(value), BigInt(salt)])
     commit(GAME_ID, hashedCommit).then()
     setOption(value)
   }
@@ -46,7 +51,7 @@ const ChoiceSelector = () => {
   const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
   const gameStatus = game?.state ?? 0
 
-  const isUserPlayer1 = BigInt(game?.player1 ?? 0) === BigInt(signer.address)
+  const isUserPlayer1 = Number(game?.player1 ?? 0) === Number(signer.address)
 
   const player1Choice = game?.player1_commit ?? 0
   const player2Choice = game?.player2_commit ?? 0
@@ -57,7 +62,7 @@ const ChoiceSelector = () => {
   React.useEffect(() => {
     if (gameStatus !== STATE_COMMIT_2 && gameStatus !== STATE_REVEAL_1) return
     if (playerChoice) return
-    const hashedCommit = poseidonHashMany([BigInt(2), BigInt(option), BigInt(salt)])
+    const hashedCommit = poseidonHashMany([BigInt(option), BigInt(salt)])
     reveal(GAME_ID, hashedCommit, option as OptionType, salt).then()
   }, [gameStatus, playerChoice])
 
