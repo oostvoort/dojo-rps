@@ -144,7 +144,16 @@ Start by installing `dojoup`. This cli tool is a critical component when buildin
 ```shell
 curl -L https://install.dojoengine.org | bash
 dojoup
+
 ```
+
+````console
+dojoup  --path /home/[username here]/.dojo/dojoengine/dojo/
+````
+
+````shell
+dojoup -P 662
+````
 
 The command downloads the `dojoup` installation script and executes it.
 
