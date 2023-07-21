@@ -31,13 +31,24 @@ export async function setupNetwork() {
     const lastBlock = await provider.provider.getBlock("latest");
     localStorage.setItem('RPS_LAST_SYNCED_BLOCK', JSON.stringify(lastBlock.block_number));
 
+    const wsProvider = new Providers.WebSocketProvider('ws://localhost:8081')
+
     const syncWorker = new SyncWorker(provider, contractComponents, EVENT_KEY);
+
+    wsProvider.addMessageListener((message: {txHash?: string}) => {
+        console.info('[Received Message]', message)
+        if (message.txHash) syncWorker.sync(message.txHash)
+    })
 
     return {
         contractComponents,
         provider,
+        wsProvider,
         signer,
-        execute: async (system: string, call_data: number.BigNumberish[]) => provider.execute(signer, system, call_data),
+        execute: async (system: string, call_data: number.BigNumberish[]) => {
+            console.log(`executing ${system} with call_data:`, call_data)
+            return provider.execute(signer, system, call_data)
+        },
         entity: async (component: string, query: Query) => provider.entity(component, query),
         entities: async (component: string, partition: string, length: number) => provider.entities(component, partition, length),
         world,
