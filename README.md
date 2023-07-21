@@ -148,11 +148,7 @@ dojoup
 ```
 
 ````console
-dojoup  --path /home/[username here]/.dojo/dojoengine/dojo/
-````
-
-````shell
-dojoup -P 662
+dojoup -P 662 --path /home/[username here]/.dojo/dojoengine/dojo/
 ````
 
 The command downloads the `dojoup` installation script and executes it.
