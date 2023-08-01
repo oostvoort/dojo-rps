@@ -147,10 +147,6 @@ dojoup
 
 ```
 
-````console
-dojoup -P 662 --path /home/[username here]/.dojo/dojoengine/dojo/
-````
-
 The command downloads the `dojoup` installation script and executes it.
 
 ### Step 2: Clone the Repository
@@ -187,7 +183,8 @@ katana --allow-zero-max-fee
 Finally, deploy your world using the `sozo migrate` command. This command, deploys your world to Katana!
 
 ```shell
-make deploy
+cd contracts
+scarb run deploy
 ```
 
 ### Step 6: Get the React frontend ready
@@ -201,16 +198,7 @@ yarn
 
 ### Step 7: Run the frontend locally
 
-```shell
+````shell
 cd web
 yarn dev
-```
-
-### Step 8: Create initial game
-````shell
-make grant_write c=Game s=commit
-make grant_write c=Game s=reset
-make grant_write c=Game s=reveal
-make grant_write c=Player s=reveal
-make ecs_exe s=create
 ````
