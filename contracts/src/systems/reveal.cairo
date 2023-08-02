@@ -89,10 +89,29 @@ mod reveal {
             game.winner = winner;
             if winner == 0 {
                 // TODO emit event for "Draw"
-            } else if winner == 1 {
-                // TODO emit event for Player1 wins
-            }else if winner == 2 {
-                // TODO emit event for Player2 wins
+            } else {
+                let winner_address = if winner == 1 {
+                    game.player1
+                } else {
+                    game.player2
+                };
+                let winning_player = try_get!(ctx.world, winner_address.into(), Player);
+                if winning_player.is_none() {
+                    set!(
+                        ctx.world,
+                        winner_address.into(),
+                        (Player { wins: 1 })
+                    );
+                } else {
+                    let mut winning_player = winning_player.unwrap();
+                    winning_player.wins += 1;
+                    set!(
+                        ctx.world,
+                        winner_address.into(),
+                        (Player { wins: winning_player.wins })
+                    );
+                }
+
             }
 
             // switch the state to decided

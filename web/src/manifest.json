@@ -93,10 +93,15 @@
         }
       ],
       "outputs": [],
-      "class_hash": "0x2feefc26d012263f1463d84a70e097827af4b47225b0b891bacebee05135391",
+      "class_hash": "0x3ab6daccf5699c0140102f4b4d35251cee4bffe71fa16545a137c7849763e17",
       "dependencies": [
         {
           "name": "Game",
+          "read": true,
+          "write": true
+        },
+        {
+          "name": "Player",
           "read": true,
           "write": true
         }
