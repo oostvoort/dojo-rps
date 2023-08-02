@@ -8,7 +8,8 @@ const useLogs = () => {
     const [totalGames, setTotalGames] = React.useState<number>(0)
 
     const {
-        systemCalls: { reset }
+        systemCalls: { reset },
+        network: { signer }
     } = useDojo()
 
     const gameQuery = useGame(GAME_ID)
@@ -18,6 +19,9 @@ const useLogs = () => {
     const gameStatus = game?.state ?? 0
     const winningChoice = (gameWinner === 1 ? game?.player1.commit : game?.player2.commit) ?? 0
     const selectedChoice = commits[winningChoice]
+
+    // only player1 resets
+    const isPlayer1 = signer.address === game?.player1.address
 
     React.useEffect(() => {
         if (gameStatus !== STATE_DECIDED) return
@@ -31,10 +35,13 @@ const useLogs = () => {
                 }
             ]
         })
-        setTimeout(() => {
+        if (!isPlayer1) return
+        const resetGame = setTimeout(() => {
             reset(GAME_ID).then()
         }, 5_000)
-    }, [reset, selectedChoice, gameStatus, gameWinner])
+
+        return () => clearTimeout(resetGame)
+    }, [reset, selectedChoice, gameStatus, gameWinner, isPlayer1])
 
     return {
         battleLogs,
