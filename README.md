@@ -133,7 +133,7 @@ The Dojo Starter contains the minimum required code to bootstrap your Dojo Auton
 -   Rust - install [here](https://www.rust-lang.org/tools/install)
 -   Cairo language server - install [here](https://book.dojoengine.org/development/setup.html#3-setup-cairo-vscode-extension)
 
-## Step-by-Step Guide
+## <span id="step-by-step-guide">Step-by-Step Guide</span>
 
 Follow the steps below to setup and run your first Autonomous World.
 
@@ -208,4 +208,14 @@ yarn
 ````shell
 cd web
 yarn dev
+````
+
+## Demoing RPS
+1. Follow the prior [Step-by-Step Guide](#span-idstep-by-step-guide-step-by-step-guide-span) to launch and get the demo running
+2. Launch the following webpages in incognito:
+````console
+# for player 1
+http://localhost:5173/?account=1
+# for player 2
+http://localhost:5173/?account=2
 ````
