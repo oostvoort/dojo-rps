@@ -6,7 +6,6 @@ import useGame from "./torii/entities/useGame";
 const useLogs = () => {
     const [battleLogs, setBattleLogs] = React.useState<Array<{selectedChoice: string, player: string}>>([]);
     const [totalGames, setTotalGames] = React.useState<number>(0)
-    const [resetting, setResetting] = React.useState(false)
 
     const {
         systemCalls: { reset }
@@ -21,8 +20,7 @@ const useLogs = () => {
     const selectedChoice = commits[winningChoice]
 
     React.useEffect(() => {
-        if (gameStatus !== STATE_DECIDED || resetting) return
-        setResetting(true)
+        if (gameStatus !== STATE_DECIDED) return
         setTotalGames(prevTotalGames => prevTotalGames + 1)
         setBattleLogs(prevBattleLogs => {
             return [
@@ -34,9 +32,9 @@ const useLogs = () => {
             ]
         })
         setTimeout(() => {
-            reset(GAME_ID).then(() => setResetting(false))
+            reset(GAME_ID).then()
         }, 5_000)
-    }, [resetting, selectedChoice, gameStatus, gameWinner])
+    }, [reset, selectedChoice, gameStatus, gameWinner])
 
     return {
         battleLogs,
