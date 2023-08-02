@@ -1,12 +1,7 @@
-// import {useDojo} from './DojoContext';
-// import {useComponentValue} from "@dojoengine/react";
-// import {Direction} from './dojo/createSystemCalls'
-// import {Utils} from '@dojoengine/core';
 import clsx from "clsx";
 import GamePanel from "./components/GamePanel.tsx";
 
 function App() {
-
     return (
        <div className={clsx(
            'w-screen h-screen',

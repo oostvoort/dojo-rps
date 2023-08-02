@@ -187,7 +187,14 @@ cd contracts
 scarb run deploy
 ```
 
-### Step 6: Get the React frontend ready
+### Step 6: Run torii
+Index the world contract using torii
+````shell
+cd contracts
+torii --manifest target/dev/manifest.json
+````
+
+### Step 7: Get the React frontend ready
 
 ```shell
 make prep_web
@@ -196,7 +203,7 @@ yarn
 ```
 
 
-### Step 7: Run the frontend locally
+### Step 8: Run the frontend locally
 
 ````shell
 cd web

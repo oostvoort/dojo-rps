@@ -5,9 +5,8 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import {poseidonHashMany} from "micro-starknet";
 import useSaltGenerator from "../hooks/useSaltGenerator";
 import {useDojo} from "../DojoContext";
-import {useComponentValue} from "@dojoengine/react";
-import {Utils} from "@dojoengine/core";
 import {OptionType} from "../global/types";
+import useGame from "../hooks/torii/entities/useGame";
 
 const commits = [
   {
@@ -30,7 +29,6 @@ const ChoiceSelector = () => {
 
   const {
     systemCalls: { commit, reveal },
-    components: { Game },
     network: { signer }
   } = useDojo()
 
@@ -48,13 +46,14 @@ const ChoiceSelector = () => {
     setOption(value)
   }
 
-  const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
+  const gameQuery = useGame(GAME_ID)
+  const game = gameQuery.data
   const gameStatus = game?.state ?? 0
 
   const isUserPlayer1 = Number(game?.player1 ?? 0) === Number(signer.address)
 
-  const player1Choice = game?.player1_commit ?? 0
-  const player2Choice = game?.player2_commit ?? 0
+  const player1Choice = game?.player1.commit ?? 0
+  const player2Choice = game?.player2.commit ?? 0
 
   const playerChoice = isUserPlayer1 ? player1Choice : player2Choice
 

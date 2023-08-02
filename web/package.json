@@ -18,6 +18,8 @@
     "clsx": "^2.0.0",
     "ethers": "^5.7.2",
     "events": "^3.3.0",
+    "graphql": "^16.7.1",
+    "graphql-request": "^6.1.0",
     "micro-starknet": "^0.2.3",
     "mobx": "^6.9.0",
     "proxy-deep": "^3.1.1",

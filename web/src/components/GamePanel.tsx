@@ -3,26 +3,25 @@ import clsx from "clsx";
 import Choice from "./Choice.tsx";
 import {useDojo} from "../DojoContext";
 import {commits, GAME_ID} from "../global/constants";
-import {useComponentValue} from "@dojoengine/react";
-import {Utils} from "@dojoengine/core";
 import useGameStatus from "../hooks/useGameStatus";
 import Timer from "./Timer";
 import ChoiceSelector from "./ChoiceSelector";
 import StatsPanel from "./StatsPanel";
+import useGame from "../hooks/torii/entities/useGame";
 
 export default function GamePanel() {
     const {
-        components: { Game },
         network: { signer }
     } = useDojo()
 
 
-    const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
+    const gameQuery = useGame(GAME_ID)
+    const game = gameQuery.data
 
-    const isUserPlayer1 = Number(game?.player1 ?? 0) === Number(signer.address)
+    const isUserPlayer1 = game?.player1.address === signer.address
 
-    const player1Choice = game?.player1_commit ?? 0
-    const player2Choice = game?.player2_commit ?? 0
+    const player1Choice = game?.player1.commit ?? 0
+    const player2Choice = game?.player2.commit ?? 0
 
     const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
 

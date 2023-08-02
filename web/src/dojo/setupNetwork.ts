@@ -27,23 +27,10 @@ export async function setupNetwork() {
 
     const signer = new Account(provider.sequencerProvider, KATANA_ACCOUNT_ADDRESS, ec.getKeyPair(KATANA_ACCOUNT_PRIVATEKEY))
 
-    // set lastBlock synced here
-    const lastBlock = await provider.provider.getBlock("latest");
-    localStorage.setItem('RPS_LAST_SYNCED_BLOCK', JSON.stringify(lastBlock.block_number));
-
-    const wsProvider = new Providers.WebSocketProvider('ws://localhost:8081')
-
     const syncWorker = new SyncWorker(provider, contractComponents, EVENT_KEY);
-
-    wsProvider.addMessageListener((message: {txHash?: string}) => {
-        console.info('[Received Message]', message)
-        if (message.txHash) syncWorker.sync(message.txHash)
-    })
-
     return {
         contractComponents,
         provider,
-        wsProvider,
         signer,
         execute: async (system: string, call_data: number.BigNumberish[]) => {
             console.log(`executing ${system} with call_data:`, call_data)

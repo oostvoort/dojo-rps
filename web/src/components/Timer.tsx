@@ -1,18 +1,14 @@
 import React from "react";
-import {useComponentValue} from "@dojoengine/react";
-import {Utils} from "@dojoengine/core";
 import {GAME_ID, GAME_MAX_DURATION} from "../global/constants";
-import {useDojo} from "../DojoContext";
+import useGame from "../hooks/torii/entities/useGame";
 
 const Timer = () => {
-  const {
-    components: { Game },
-  } = useDojo()
 
-  const game = useComponentValue(Game, Utils.getEntityIdFromKeys([BigInt(GAME_ID)]))
+  const gameQuery = useGame(GAME_ID)
+  const game = gameQuery.data
   const [remainingTime, setRemainingTime] = React.useState<number>(0)
 
-  const startedTimestamp = game?.started_timestamp ?? 0
+  const startedTimestamp = game?.startedTimestamp ?? 0
 
   React.useEffect(() => {
     const interval = setInterval(() => {
