@@ -1,7 +1,7 @@
 import {QueryKey, useQuery, UseQueryOptions} from "@tanstack/react-query";
 import request, {Variables} from "graphql-request";
 
-const TORII_END_POINT = 'http://localhost:8080/'
+const TORII_END_POINT = import.meta.env.VITE_TORII_ENDPOINT ?? 'http://localhost:8080/'
 
 const useTorii = <TGqlReturnType>(
   queryKey: QueryKey,
