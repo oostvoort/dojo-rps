@@ -1,5 +1,6 @@
 services:
   katana:
+    image: oostvoort/katana:latest
     build:
       context: .
       dockerfile: ./deployment/katana.Dockerfile
@@ -11,6 +12,7 @@ services:
       - dojo
 
   torii:
+    image: oostvoort/torii:latest
     build:
       context: .
       dockerfile: ./deployment/torii.Dockerfile
@@ -28,6 +30,7 @@ services:
       - dojo
 
   web:
+    image: oostvoort/web:latest
     build:
       context: .
       dockerfile: ./deployment/web.Dockerfile

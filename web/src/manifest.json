@@ -63,7 +63,7 @@
         }
       ],
       "outputs": [],
-      "class_hash": "0x79dee0887257f2c4eca8bd78fc567ba03020d60ff056fc471dfc62198673f6",
+      "class_hash": "0x138ce2be027eea59e5d32ba1e6faf3354b32855cf67ab50aff8911bef215bba",
       "dependencies": [
         {
           "name": "Game",
