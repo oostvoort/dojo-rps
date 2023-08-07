@@ -16,6 +16,8 @@ export const KATANA_ACCOUNT_PRIVATEKEY = import.meta.env[`VITE_KATANA_ACCOUNT_${
 export const WORLD_ADDRESS = import.meta.env.VITE_WORLD_ADDRESS
 export const EVENT_KEY = import.meta.env.VITE_EVENT_KEY
 
+const KATANA_URL = import.meta.env.VITE_KATANA_URL ?? 'http://localhost:5050'
+
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
 
@@ -23,7 +25,7 @@ export async function setupNetwork() {
 
     const contractComponents = defineContractComponents(world);
 
-    const provider = new Providers.RPCProvider(WORLD_ADDRESS);
+    const provider = new Providers.RPCProvider(WORLD_ADDRESS, KATANA_URL);
 
     const signer = new Account(provider.sequencerProvider, KATANA_ACCOUNT_ADDRESS, ec.getKeyPair(KATANA_ACCOUNT_PRIVATEKEY))
 
