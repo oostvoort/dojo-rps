@@ -9,4 +9,4 @@ const PAPER: u8 = 2;
 const SCISSORS: u8 = 3;
 
 // The game can be reset by anyone when the time since the first commit exceeds this value
-const GAME_MAX_DURATION: u64 = 20000;
+const GAME_MAX_DURATION: u64 = 20;
