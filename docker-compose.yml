@@ -11,6 +11,21 @@ services:
     networks:
       - dojo
 
+  contracts:
+    image: oostvoort/dojo-contracts:latest
+    build:
+      context: .
+      dockerfile: ./deployment/contracts.Dockerfile
+    container_name: dojo-contracts
+    environment:
+      - RPC_URL=http://katana:5050
+    restart: unless-stopped
+    depends_on:
+      katana:
+        condition: service_started
+    networks:
+      - dojo
+
   torii:
     image: oostvoort/torii:latest
     build:

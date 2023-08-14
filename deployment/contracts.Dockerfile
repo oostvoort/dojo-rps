@@ -12,7 +12,6 @@ RUN apt-get update && \
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 
-
 # Install dojo
 SHELL ["/bin/bash", "-c"]
 RUN curl -L https://install.dojoengine.org | bash
@@ -20,4 +19,15 @@ RUN source ~/.bashrc
 ENV PATH="/root/.dojo/bin:${PATH}"
 RUN dojoup
 
-CMD ["katana", "--allow-zero-max-fee"]
+# install scarb
+SHELL ["/bin/bash", "-c"]
+RUN curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | bash
+RUN echo 'source $HOME/.bashrc' >> $HOME/.bashrc
+ENV PATH="/root/.scarb/bin:${PATH}"
+
+WORKDIR /app
+COPY ../contracts ./contracts
+
+WORKDIR /app/contracts
+
+CMD sh -c 'sozo build && sozo migrate --rpc-url $RPC_URL && /root/.local/bin/scarb run post_deploy $RPC_URL'
