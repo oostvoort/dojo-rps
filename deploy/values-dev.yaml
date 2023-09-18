@@ -27,9 +27,9 @@ grpcToriiContainerService:
 domainName: oostvoort.work                # {{ .Values.domainName }}
 
 subDomainName: 
-  dojorps: dojorps-dev.aw                 # {{ .Values.subDomainName.dojorps }}
-  katana: katana-dojorps-dev.aw           # {{ .Values.subDomainName.katana }}
-  torii: torii-dojorps-dev.aw             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc-dojorps-dev.aw    # {{ .Values.subDomainName.grpcTorii }}
+  dojorps: dojorps.dev.aw                 # {{ .Values.subDomainName.dojorps }}
+  katana: katana.dojorps-dev.aw           # {{ .Values.subDomainName.katana }}
+  torii: torii.dojorps-dev.aw             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc.dojorps-dev.aw    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: oostvoort/dojorps-dev:latest

@@ -1,5 +1,5 @@
 projectName: dojorps
-nameSpace: prod
+nameSpace: dev
 appType:
   frontend: webapp
   database: db
@@ -24,12 +24,12 @@ grpcToriiContainerService:
   port: 50051      # {{ .Values.grpcToriiContainerService.port }}
 
 
-domainName: oostvoort.work 
+domainName: oostvoort.work                # {{ .Values.domainName }}
 
 subDomainName: 
-  pixelaw: dojorps-dev.aw                 # {{ .Values.subDomainName.pixelaw }}
-  katana: katana-dojorps-dev.aw           # {{ .Values.subDomainName.katana }}
-  torii: torii-dojorps-dev.aw             # {{ .Values.subDomainName.torii }}
-  grpcTorii: grpc-dojorps-dev.aw    # {{ .Values.subDomainName.grpcTorii }}
+  dojorps: dojorps.dev.aw                 # {{ .Values.subDomainName.dojorps }}
+  katana: katana.dojorps-dev.aw           # {{ .Values.subDomainName.katana }}
+  torii: torii.dojorps-dev.aw             # {{ .Values.subDomainName.torii }}
+  grpcTorii: grpc.dojorps-dev.aw    # {{ .Values.subDomainName.grpcTorii }}
 
 dockerImage: oostvoort/dojorps-dev:latest
