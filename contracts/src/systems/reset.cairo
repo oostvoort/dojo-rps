@@ -21,7 +21,7 @@ mod reset {
     ) -> () {
 
         // Retrieve Game and Player
-        let mut game = get !(ctx.world, game_id.into(), Game);
+        let mut game = get !(ctx.world, game_id, (Game));
         let player_id: felt252 = ctx.origin.into();
 
         // check if the round expired
@@ -47,22 +47,7 @@ mod reset {
 
 
         // Store the Game
-        set !(
-            ctx.world,
-            game_id.into(),
-            (Game {
-                game_id: game.game_id,
-                state: game.state,
-                player1: game.player1,
-                player2: game.player2,
-                player1_hash: game.player1_hash,
-                player2_hash: game.player2_hash,
-                player1_commit: game.player1_commit,
-                player2_commit: game.player2_commit,
-                started_timestamp: game.started_timestamp,
-                winner: game.winner
-            })
-        );
+        set !(ctx.world,(game));
 
     }
 }

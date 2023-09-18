@@ -3,30 +3,38 @@ import useTorii from "../useTorii";
 
 const QUERY = gql`
   query GameEntity($key: String!) {
-    entities(keys: [$key], componentName: "Player") {
-      id
-      components {
-        __typename
-        ... on Player {
-          wins
+  entities(keys: [$key]) {
+    edges {
+      node {
+        id
+        components {
+          __typename
+          ... on Player {
+            wins
+          }
         }
       }
     }
   }
+}
 `
 
 type GqlReturnType = {
   entities: {
-    id: string,
-    components: {
-      "__typename": "Player",
-      wins: number
+    edges: {
+      node: {
+        id: string,
+        components: {
+          "__typename": "Player",
+          wins: number
+        }[]
+      }
     }[]
-  }[]
+  }
 }
 
 const parseReturn = (data: GqlReturnType) => {
-  const entity = data.entities[0]
+  const entity = data.entities?.edges[0]?.node
   if (!entity) return { wins: 0, id: "defaultId" }
 
   const values = entity.components[0]

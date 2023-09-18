@@ -26,7 +26,6 @@ mod create {
         // game entity
         set !(
             ctx.world,
-            game_id.into(),
             (Game {
                 game_id,
                 state: STATE_IDLE,

@@ -78,7 +78,7 @@ const ChoiceSelector = () => {
             <Choice
               disabled={option !== 0}
               key={value}
-              image={`icon_${label}.png`}
+              image={`/assets/icon_${label}.png`}
               handSign={label}
               isSelected={option === value}
               onSelect={() => handleSelectedChoice(value)}

@@ -175,7 +175,7 @@ This command compiles your project and prepares it for execution.
 [Katana RPC](https://book.dojoengine.org/framework/katana/overview.html) is the communication layer for your Dojo World. It allows different components of your world to communicate with each other. To start Katana RPC, use the following command:
 
 ```shell
-katana --allow-zero-max-fee
+katana
 ```
 
 ### Step 5: Migrate (Deploy) the World
@@ -191,7 +191,7 @@ scarb run deploy
 Index the world contract using torii
 ````shell
 cd contracts
-torii --manifest target/dev/manifest.json
+torii --manifest target/dev/manifest.json --world 0x7aa3ed953a585361754b7f990a4fd37d3b2c98b630a007410ac9337dad1ac84
 ````
 
 ### Step 7: Get the React frontend ready

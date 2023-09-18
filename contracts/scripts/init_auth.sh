@@ -2,7 +2,7 @@
 set -euo pipefail
 pushd $(dirname "$0")/..
 
-export DOJO_WORLD_ADDRESS="0x79a3c37167370f03882049edbb291a4c8b79b988835184a18a0695f4dc4fe0c"
+export DOJO_WORLD_ADDRESS="0x7aa3ed953a585361754b7f990a4fd37d3b2c98b630a007410ac9337dad1ac84"
 
 # make sure all components/systems are deployed
 COMPONENTS=("Game" "Player")

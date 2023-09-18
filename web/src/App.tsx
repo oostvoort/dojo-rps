@@ -9,25 +9,25 @@ function App() {
            'bg-gradient-to-b from-[#007795] to-[#1F215C]'
        )}>
            <img
-               src={'/left_dojoCut.png'}
+               src={'/assets/left_dojoCut.png'}
                alt={'left'}
                className={'absolute top-0 left-[85px]'}
                draggable={false}
            />
            <img
-               src={'/right_dojoCut.png'}
+               src={'/assets/right_dojoCut.png'}
                alt={'right'}
                className={'absolute top-0 right-[85px]'}
                draggable={false}
            />
            <img
-               src={'/top_dojoCut.png'}
+               src={'/assets/top_dojoCut.png'}
                alt={'right'}
                className={'absolute top-0'}
                draggable={false}
            />
            <img
-               src={'/img_logo.png'}
+               src={'/assets/img_logo.png'}
                alt={'right'}
                className={'absolute top-[42px]'}
                draggable={false}

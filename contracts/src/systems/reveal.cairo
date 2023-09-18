@@ -61,7 +61,7 @@ mod reveal {
     ) -> () {
 
         // Retrieve Game and Player
-        let mut game = get !(ctx.world, game_id.into(), Game);
+        let mut game = get !(ctx.world, game_id, (Game));
         let player_id: felt252 = ctx.origin.into();
 
 
@@ -95,22 +95,9 @@ mod reveal {
                 } else {
                     game.player2
                 };
-                let winning_player = try_get!(ctx.world, winner_address.into(), Player);
-                if winning_player.is_none() {
-                    set!(
-                        ctx.world,
-                        winner_address.into(),
-                        (Player { wins: 1 })
-                    );
-                } else {
-                    let mut winning_player = winning_player.unwrap();
-                    winning_player.wins += 1;
-                    set!(
-                        ctx.world,
-                        winner_address.into(),
-                        (Player { wins: winning_player.wins })
-                    );
-                }
+                let mut winning_player = get!(ctx.world, winner_address, Player);
+                winning_player.wins += 1;
+                set!(ctx.world,(winning_player));
 
             }
 
@@ -123,21 +110,6 @@ mod reveal {
         }
 
         // Store the Game
-        set !(
-            ctx.world,
-            game_id.into(),
-            (Game {
-                game_id: game.game_id,
-                state: game.state,
-                player1: game.player1,
-                player2: game.player2,
-                player1_hash: game.player1_hash,
-                player2_hash: game.player2_hash,
-                player1_commit: game.player1_commit,
-                player2_commit: game.player2_commit,
-                started_timestamp: game.started_timestamp,
-                winner: game.winner
-            })
-        );
+        set !(ctx.world,(game));
     }
 }

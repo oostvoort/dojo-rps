@@ -3,21 +3,24 @@ import useTorii from "../useTorii";
 
 const QUERY = gql`
 query GameEntity($key: String!) {
-  entities(keys: [$key], componentName: "Game") {
-    id
-    components {
-      __typename
-      ... on Game {
-        game_id
-        player1
-        player1_commit
-        player1_hash
-        player2
-        player2_commit
-        player2_hash
-        started_timestamp
-        state
-        winner
+  entities(keys: [$key]) {
+    edges {
+      node {
+        id
+        components {
+          __typename
+          ... on Game {
+            player1
+            player1_commit
+            player1_hash
+            player2
+            player2_commit
+            player2_hash
+            started_timestamp
+            state
+            winner
+          }
+        }
       }
     }
   }
@@ -26,25 +29,28 @@ query GameEntity($key: String!) {
 
 type GqlReturnType = {
   entities: {
-    id: string,
-    components: {
-      "__typename": "Game",
-      game_id: number,
-      player1: string,
-      player1_commit: number,
-      player1_hash: string,
-      player2: string,
-      player2_commit: number,
-      player2_hash: string,
-      started_timestamp: number,
-      state: number,
-      winner: number
+    edges: {
+      node: {
+        id: string,
+        components: {
+          "__typename": "Game",
+          player1: string,
+          player1_commit: number,
+          player1_hash: string,
+          player2: string,
+          player2_commit: number,
+          player2_hash: string,
+          started_timestamp: number,
+          state: number,
+          winner: number
+        }[]
+      }
     }[]
-  }[]
+  }
 }
 
 const parseReturn = (data: GqlReturnType) => {
-  const entity = data.entities[0]
+  const entity = data.entities.edges?.[0]?.node
   if (!entity) return undefined
 
   const values = entity.components[0]
@@ -52,7 +58,6 @@ const parseReturn = (data: GqlReturnType) => {
 
   return {
     id: entity.id,
-    gameId: values.game_id,
     player1: {
       address: values.player1,
       commit: values.player1_commit,

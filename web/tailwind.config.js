@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'game-panel': "url('/bg_gamePanel.jpg')",
+        'game-panel': "url('/assets/bg_gamePanel.jpg')",
       },
       fontFamily: {
         oswald: ['Oswald', 'sans-serif'],
