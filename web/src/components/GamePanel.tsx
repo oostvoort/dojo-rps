@@ -44,7 +44,7 @@ export default function GamePanel() {
                         <p className={'text-option-2 text-[20px] font-noto text-center mb-4'}>Opponent Choice</p>
                         {opponentChoice === 0 && <Choice image={'/assets/icon_questionMark.png'} />}
                         {opponentChoice !== 0 && <Choice
-                          image={`icon_${commits[opponentChoice].toLowerCase()}.png`}
+                          image={`/assets/icon_${commits[opponentChoice].toLowerCase()}.png`}
                           handSign={commits[opponentChoice]}
                         />}
                     </div>

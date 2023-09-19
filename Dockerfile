@@ -23,10 +23,6 @@ RUN sozo build
 
 FROM oostvoort/dojo-forkserver:v1.0.3 AS runtime
 
-# Install node
-RUN apt-get update -y && \
-    apt-get install -y nodejs npm
-
 WORKDIR /opt
 COPY --from=contracts_builder /app/target ./contracts/target/
 COPY --from=web_node_builder /app/dist static/
@@ -36,6 +32,5 @@ COPY ./contracts/scripts contracts/scripts
 COPY ./contracts/.env.development .env
 
 HEALTHCHECK CMD (curl --fail http://localhost:3000 && curl --fail http://localhost:5050) || exit 1
-
 
 CMD ["/opt/server"]
