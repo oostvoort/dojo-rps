@@ -8,14 +8,16 @@ on:
 env:
   PROJECTNAME: dojorps
   REGISTRY: ${{ vars.DOCKERHUB_USERNAME}}
-  
+  CHART_DIR: helm-charts
+  CHART_REPO: oostvoort/helm-charts
+  CHART_REPO_BRANCH: gh-pages
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  build_and_deploy:
+  build_and_push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -44,23 +46,54 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
-      - name: Build, tag, and push image
-        id: build-image
-        run: |
-          SHORT_SHA=${GITHUB_SHA::7}
-          docker build -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest  .
-          docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest
-          docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA
+      # - name: Build, tag, and push image
+      #   id: build-image
+      #   run: |
+      #     SHORT_SHA=${GITHUB_SHA::7}
+      #     docker build -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest  .
+      #     docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest
+      #     docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA
 
-      - name: Deploy to ArgoCD
-        id: deploy-image
+  helmRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+
+      - name: Checkout Helm chart repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ env.CHART_REPO }}
+          path: .helm-chart-repo
+          token: ${{ secrets.CHART_GITHUB_TOKEN }}
+
+
+      - name: Install yq - portable yaml processor
+        uses: mikefarah/yq@v4.30.5
+
+      - name: Collect charts
+        id: charts
         run: |
-          wget https://github.com/argoproj/argo-cd/releases/download/v2.8.3/argocd-linux-amd64 -O argocd
-          chmod +x argocd
-          sudo mv argocd /usr/local/bin
-          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
-          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}
-          argocd app create $PROJECTNAME-$GITHUB_REF_NAME --repo https://github.com/$GITHUB_REPOSITORY.git --revision $GITHUB_REF_NAME --path ./deploy/ --values values-$GITHUB_REF_NAME.yaml --dest-namespace $PROJECTNAME-$GITHUB_REF_NAME  --dest-server https://kubernetes.default.svc --upsert
-          argocd app sync $PROJECTNAME-$GITHUB_REF_NAME
-          argocd app wait $PROJECTNAME-$GITHUB_REF_NAME
-          argocd app actions run $PROJECTNAME-$GITHUB_REF_NAME --namespace $PROJECTNAME-$GITHUB_REF_NAME restart --kind Deployment 
+          set -e
+          find -L charts -mindepth 2 -maxdepth 2 -type f \( -name 'Chart.yaml' -o -name 'Chart.yml' \) -exec dirname "{}" \; \
+          | sort -u \
+          | sed -E 's/^/- /' \
+          | yq --no-colors --indent 0 --output-format json '.' \
+          | sed -E 's/^/charts=/' >> $GITHUB_OUTPUT
+
+
+
+
+      # - name: Deploy to ArgoCD
+      #   id: deploy-image
+      #   run: |
+      #     wget https://github.com/argoproj/argo-cd/releases/download/v2.8.3/argocd-linux-amd64 -O argocd
+      #     chmod +x argocd
+      #     sudo mv argocd /usr/local/bin
+      #     export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
+      #     export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}
+      #     argocd app create $PROJECTNAME-$GITHUB_REF_NAME --repo https://github.com/$GITHUB_REPOSITORY.git --revision $GITHUB_REF_NAME --path ./deploy/ --values values-$GITHUB_REF_NAME.yaml --dest-namespace $PROJECTNAME-$GITHUB_REF_NAME  --dest-server https://kubernetes.default.svc --upsert
+      #     argocd app sync $PROJECTNAME-$GITHUB_REF_NAME
+      #     argocd app wait $PROJECTNAME-$GITHUB_REF_NAME
+      #     argocd app actions run $PROJECTNAME-$GITHUB_REF_NAME --namespace $PROJECTNAME-$GITHUB_REF_NAME restart --kind Deployment 
