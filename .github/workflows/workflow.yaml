@@ -128,6 +128,19 @@ jobs:
             --package-path '${{ steps.package.outputs.dir }}' --skip-existing
 
 
+      - name: Update charts index
+        working-directory: .helm-chart-repo
+        run: |
+          set -ex
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          mkdir -p .cr-index
+          owner=$(cut -d '/' -f 1 <<< '${{ github.repository }}')
+          repo=$(cut -d '/' -f 2 <<< '${{ github.repository }}')
+          cr index --git-repo "$repo" --owner "$owner" --pages-branch '${{ env.CHART_REPO_BRANCH }}' \
+            --package-path '../${{ steps.package.outputs.dir }}' \
+            --index-path .cr-index --push
+
       # - name: Deploy to ArgoCD
       #   id: deploy-image
       #   run: |
