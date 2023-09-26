@@ -53,93 +53,38 @@ jobs:
       #     docker build -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA -t $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest  .
       #     docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:latest
       #     docker push $REGISTRY/$PROJECTNAME-$GITHUB_REF_NAME:$SHORT_SHA
-
   helmRelease:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-
-      - name: Checkout Helm chart repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
-          repository: ${{ env.CHART_REPO }}
+          fetch-depth: 0
 
-
-      - name: Install yq - portable yaml processor
-        uses: mikefarah/yq@v4.30.5
-
-      - name: Collect charts
-        id: charts
+      - name: Configure Git
         run: |
-          set -e
-          find -L charts -mindepth 2 -maxdepth 2 -type f \( -name 'Chart.yaml' -o -name 'Chart.yml' \) -exec dirname "{}" \; \
-          | sort -u \
-          | sed -E 's/^/- /' \
-          | yq --no-colors --indent 0 --output-format json '.' \
-          | sed -E 's/^/charts=/' >> $GITHUB_OUTPUT
-
-      - name: Install chart releaser
-        run: |
-          set -e
-          arch="$(dpkg --print-architecture)"
-          curl -s https://api.github.com/repos/helm/chart-releaser/releases/latest \
-          | yq --indent 0 --no-colors --input-format json --unwrapScalar \
-            ".assets[] | select(.name | test("\""^chart-releaser_.+_linux_${arch}\.tar\.gz$"\"")) | .browser_download_url" \
-          | xargs curl -SsL \
-          | tar zxf - -C /usr/local/bin
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v3.4
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.1
 
-      - name: Helm Deps
+      - name: custom packaging
         run: |
-          set -ex
-          echo '${{ steps.charts.outputs.charts }}' \
-          | yq --indent 0 --no-colors --input-format json --unwrapScalar '.[]' \
-          | while read -r dir; do
-              helm dependency update $dir;
-              if [ -f "$dir/Chart.lock" ]; then
-                yq --indent 0 \
-                  '.dependencies | map(["helm", "repo", "add", .name, .repository] | join(" ")) | .[]' \
-                  "$dir/Chart.lock" \
-                | sh --;
-              fi
-            done
+          VERSION=${{github.ref_name}}
+          rm -rf .cr-release-packages
+          mkdir -p .cr-release-packages
+          helm package charts/youtube-stats-chart --app-version=${VERSION:1} --version=${VERSION:1} --destination=.cr-release-packages
 
-      - name: Package charts
-        id: package
-        run: |
-          set -ex
-          PACKAGES=.cr-release-packages
-          echo '${{ steps.charts.outputs.charts }}' \
-          | yq --indent 0 --no-colors --input-format json --unwrapScalar '.[]' \
-          | xargs -d$'\n' cr package --package-path "$PACKAGES"
-          echo "dir=${PACKAGES}" >> $GITHUB_OUTPUT
-
-      - name: Upload packages
-        run: |
-          set -ex
-          git config --list
-          owner=$(cut -d '/' -f 1 <<< '${{ github.repository }}')
-          repo=$(cut -d '/' -f 2 <<< '${{ github.repository }}')
-          cr upload --commit '${{ github.sha }}' --git-repo "$repo" --owner "$owner" --token '${{ github.token }}' \
-            --package-path '${{ steps.package.outputs.dir }}' --skip-existing
-
-
-      - name: Update charts index
-        working-directory: .helm-chart-repo
-        run: |
-          set -ex
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          mkdir -p .cr-index
-          owner=$(cut -d '/' -f 1 <<< '${{ github.repository }}')
-          repo=$(cut -d '/' -f 2 <<< '${{ github.repository }}')
-          cr index --git-repo "$repo" --owner "$owner" --pages-branch '${{ env.CHART_REPO_BRANCH }}' \
-            --package-path '../${{ steps.package.outputs.dir }}' \
-            --index-path .cr-index --push
+      - name: Run chart-releaser
+        # switch back to helm/chart-releaser-action if this contribution is ever merged
+        uses: askcloudarchitech/chart-releaser-action@skip-packaging-option
+        with:
+          skip_packaging: true
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       # - name: Deploy to ArgoCD
       #   id: deploy-image
