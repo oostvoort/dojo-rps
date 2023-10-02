@@ -211,4 +211,15 @@ entries:
     urls:
     - https://github.com/oostvoort/dojo-rockpaperscissors/releases/download/chart-0.1.0/chart-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-02T08:06:58.114723812Z"
+  dojorps:
+  - apiVersion: v2
+    appVersion: 1.1.26
+    created: "2023-10-02T09:02:45.382017181Z"
+    description: A Helm chart for Kubernetes
+    digest: af3b1e86f7aed47296252ebf49f60a634dbc56343e445ef3062d7022da6b4d43
+    name: dojorps
+    type: application
+    urls:
+    - https://github.com/oostvoort/dojo-rockpaperscissors/releases/download/dojorps-1.1.26/dojorps-1.1.26.tgz
+    version: 1.1.26
+generated: "2023-10-02T09:02:45.382266987Z"
