@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   chart:
   - apiVersion: v2
+    appVersion: 1.1.21
+    created: "2023-10-02T07:09:01.852488933Z"
+    description: A Helm chart for Kubernetes
+    digest: e080b9ae21472cf075b9c5cfd3d3eae329ada4c78f28967b3bd55550337a9219
+    name: chart
+    type: application
+    urls:
+    - https://github.com/oostvoort/dojo-rockpaperscissors/releases/download/chart-1.1.21/chart-1.1.21.tgz
+    version: 1.1.21
+  - apiVersion: v2
     appVersion: 1.1.20
     created: "2023-10-02T07:01:15.970851315Z"
     description: A Helm chart for Kubernetes
@@ -171,4 +181,4 @@ entries:
     urls:
     - https://github.com/oostvoort/dojo-rockpaperscissors/releases/download/chart-0.1.0/chart-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-02T07:01:15.970964616Z"
+generated: "2023-10-02T07:09:01.852611434Z"
