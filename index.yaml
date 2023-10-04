@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   dojorps:
   - apiVersion: v2
+    appVersion: 0.0.4
+    created: "2023-10-04T08:49:56.564841339Z"
+    description: A Helm chart for Kubernetes
+    digest: 80aef53e0da7697bb14125af490bc9fc0177c9189dade6074d808c6b5103b34f
+    name: dojorps
+    type: application
+    urls:
+    - https://github.com/oostvoort/dojo-rps/releases/download/dojorps-0.0.4/dojorps-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
     appVersion: 0.0.3
     created: "2023-10-04T08:46:13.5159029Z"
     description: A Helm chart for Kubernetes
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/oostvoort/dojo-rps/releases/download/dojorps-0.0.1/dojorps-0.0.1.tgz
     version: 0.0.1
-generated: "2023-10-04T08:46:13.5159205Z"
+generated: "2023-10-04T08:49:56.564855539Z"
