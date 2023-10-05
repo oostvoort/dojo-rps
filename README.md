@@ -1,4 +1,4 @@
-![](assets/img_logo.png)
+![](https://raw.githubusercontent.com/oostvoort/dojo-rps/main/assets/img_logo.png)
 # Dojo Rock Paper Scissors
 An open-sourced rock paper scissors game that is built using [Dojo](https://github.com/dojoengine/dojo).
 The way it works is as follows:
