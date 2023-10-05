@@ -16,3 +16,7 @@ export const STATE_REVEAL_1 = 4
 export const STATE_DECIDED = 5
 
 export const GAME_MAX_DURATION = 20;
+
+export const PUBLIC_NODE_URL: string = import.meta.env.VITE_PUBLIC_NODE_URL ?? 'http://localhost:5050'
+
+export const BLOCK_TIME = 1_000

@@ -7,8 +7,11 @@ import {useQuery} from "@tanstack/react-query";
 const Timer = () => {
 
   const {
-    network: { provider },
-    systemCalls: { reset }
+    setup: {
+      network: { provider },
+      systemCalls: { reset }
+    },
+    account: { account }
   } = useDojo()
 
   const gameQuery = useGame(GAME_ID)
@@ -50,7 +53,7 @@ const Timer = () => {
         setRemainingTime(0)
         clearInterval(interval)
 
-        reset(GAME_ID)
+        reset(account, GAME_ID)
       }
     }, 1000)
     return () => {

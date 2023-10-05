@@ -1,7 +1,9 @@
 import useLogs from "../hooks/useLogs";
 import {GAME_ID} from "../global/constants";
-import useGame from "../hooks/torii/entities/useGame";
-import usePlayer from "../hooks/torii/entities/usePlayer";
+import {getEntityIdFromKeys} from "@dojoengine/utils";
+import {useComponentValue} from "@dojoengine/react";
+import {useDojo} from "../DojoContext";
+import {convertToDecimal} from "../global/utils";
 
 const StatsPanel = () => {
   const {
@@ -9,14 +11,15 @@ const StatsPanel = () => {
     totalGames,
   } = useLogs()
 
+  const {
+    setup: { components: { Game, Player }}
+  } = useDojo()
 
-  const gameQuery = useGame(GAME_ID)
-  const game = gameQuery.data
 
-  const player1Query = usePlayer(game?.player1.address ?? '')
-  const player1 = player1Query.data
-  const player2Query = usePlayer(game?.player2.address ?? '')
-  const player2 = player2Query.data
+  const entityId = getEntityIdFromKeys([BigInt(GAME_ID)])
+  const game = useComponentValue(Game, entityId)
+  const player1 = useComponentValue(Player, getEntityIdFromKeys([BigInt(convertToDecimal(game?.player1?.toString() ?? "0x0"))]))
+  const player2 = useComponentValue(Player, getEntityIdFromKeys([BigInt(convertToDecimal(game?.player2?.toString() ?? "0x0"))]))
 
   return (
     <>

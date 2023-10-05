@@ -1,0 +1,28 @@
+query getEntities {
+  entities(keys: ["%"]) {
+    edges {
+      node {
+        keys
+        id
+        components {
+          __typename
+          ... on Game {
+            game_id
+            player1
+            player1_commit
+            player1_hash
+            player2
+            player2_commit
+            player2_hash
+            started_timestamp
+            state
+            winner
+          }
+          ... on Player {
+            wins
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+services:
+  dojo-forkserver:
+    image: oostvoort/dojo-forkserver:v1.1.6
+    container_name: dojo-forkserver
+    ports:
+      - "5050:5050"
+      - "3000:3000"
+      - "8080:8080"
+      - "50051"
+    restart: unless-stopped
+    volumes:
+      - ./contracts:/opt/contracts
+    networks:
+      - dojo-rps
+
+networks:
+  dojo-rps:
+    driver: bridge
+
