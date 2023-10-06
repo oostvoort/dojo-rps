@@ -6,7 +6,8 @@ import {poseidonHashMany} from "micro-starknet";
 import useSaltGenerator from "../hooks/useSaltGenerator";
 import {useDojo} from "../DojoContext";
 import {OptionType} from "../global/types";
-import useGame from "../hooks/torii/entities/useGame";
+import {useComponentValue} from "@dojoengine/react";
+import {getEntityIdFromKeys} from "@dojoengine/utils";
 
 const commits = [
   {
@@ -28,8 +29,11 @@ const ChoiceSelector = () => {
   const { salt, changeSalt } = useSaltGenerator()
 
   const {
-    systemCalls: { commit, reveal },
-    network: { signer }
+    setup: {
+      systemCalls: { commit, reveal },
+      components: { Game }
+    },
+    account: { account }
   } = useDojo()
 
   // change salt when there is no salt currently
@@ -42,18 +46,17 @@ const ChoiceSelector = () => {
   const handleSelectedChoice = (value: number) => {
     if (option) return
     const hashedCommit = poseidonHashMany([BigInt(value), BigInt(salt)])
-    commit(GAME_ID, hashedCommit).then()
+    commit(account, GAME_ID, hashedCommit).then()
     setOption(value)
   }
 
-  const gameQuery = useGame(GAME_ID)
-  const game = gameQuery.data
+  const game = useComponentValue(Game, getEntityIdFromKeys([BigInt(GAME_ID)]))
   const gameStatus = game?.state ?? 0
 
-  const isUserPlayer1 = Number(game?.player1 ?? 0) === Number(signer.address)
+  const isUserPlayer1 = Number(game?.player1 ?? 0) === Number(account.address)
 
-  const player1Choice = game?.player1.commit ?? 0
-  const player2Choice = game?.player2.commit ?? 0
+  const player1Choice = game?.player1_commit ?? 0
+  const player2Choice = game?.player2_commit ?? 0
 
   const playerChoice = isUserPlayer1 ? player1Choice : player2Choice
 
@@ -62,7 +65,7 @@ const ChoiceSelector = () => {
     if (gameStatus !== STATE_COMMIT_2 && gameStatus !== STATE_REVEAL_1) return
     if (playerChoice) return
     const hashedCommit = poseidonHashMany([BigInt(option), BigInt(salt)])
-    reveal(GAME_ID, hashedCommit, option as OptionType, salt).then()
+    reveal(account, GAME_ID, hashedCommit, option as OptionType, salt).then()
   }, [gameStatus, playerChoice])
 
   /// reset commit when game is idle
