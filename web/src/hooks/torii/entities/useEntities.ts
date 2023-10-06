@@ -4,7 +4,6 @@ import { BLOCK_TIME } from '../../../global/constants'
 import { getEntityIdFromKeys } from '@dojoengine/utils'
 import { Component, getComponentValue, setComponent } from '@latticexyz/recs'
 import _ from 'lodash'
-import {convertToDecimal} from "../../../global/utils";
 
 const useEntities = () => {
 
@@ -26,7 +25,7 @@ const useEntities = () => {
         if (!edge?.node?.components) continue
         const keys = edge.node.keys
         if (!keys) continue
-        const entityId = getEntityIdFromKeys(keys.map(key => BigInt(convertToDecimal(key ?? '0x0'))))
+        const entityId = getEntityIdFromKeys(keys.map(key => BigInt(key ?? '0x0')))
         if (!edge?.node?.components) continue
         // eslint-disable-next-line no-unsafe-optional-chaining
         for (const component of edge?.node?.components) {
@@ -40,8 +39,6 @@ const useEntities = () => {
 
           // do not update if it's already equal
           if (_.isEqual(component, currentValue)) continue
-
-          console.log({componentType, entityId, currentValue, component})
 
           setComponent(componentType, entityId, component)
         }

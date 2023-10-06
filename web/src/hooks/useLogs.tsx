@@ -1,7 +1,8 @@
 import React from "react";
 import {useDojo} from "../DojoContext";
 import {commits, GAME_ID, STATE_DECIDED} from "../global/constants";
-import useGame from "./torii/entities/useGame";
+import {useComponentValue} from "@dojoengine/react";
+import {getEntityIdFromKeys} from "@dojoengine/utils";
 
 const useLogs = () => {
     const [battleLogs, setBattleLogs] = React.useState<Array<{selectedChoice: string, player: string}>>([]);
@@ -10,20 +11,21 @@ const useLogs = () => {
     const {
         setup: {
             systemCalls: { reset },
+            components: { Game }
         },
         account: { account }
     } = useDojo()
 
-    const gameQuery = useGame(GAME_ID)
-    const game = gameQuery.data
-
+    const game = useComponentValue(Game, getEntityIdFromKeys([BigInt(GAME_ID)]))
     const gameWinner = game?.winner ?? 0
     const gameStatus = game?.state ?? 0
-    const winningChoice = (gameWinner === 1 ? game?.player1.commit : game?.player2.commit) ?? 0
+    const winningChoice = (gameWinner === 1 ? game?.player1_commit : game?.player2_commit) ?? 0
     const selectedChoice = commits[winningChoice]
 
     // only player1 resets
-    const isPlayer1 = account.address === game?.player1.address
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const isPlayer1 = account.address === game?.player1
 
     React.useEffect(() => {
         if (gameStatus !== STATE_DECIDED) return
@@ -43,7 +45,7 @@ const useLogs = () => {
         }, 5_000)
 
         return () => clearTimeout(resetGame)
-    }, [reset, selectedChoice, gameStatus, gameWinner, isPlayer1])
+    }, [account, reset, selectedChoice, gameStatus, gameWinner, isPlayer1])
 
     return {
         battleLogs,

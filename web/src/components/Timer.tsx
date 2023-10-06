@@ -1,27 +1,28 @@
 import React from "react";
 import {GAME_ID, GAME_MAX_DURATION, STATE_COMMIT_1} from "../global/constants";
-import useGame from "../hooks/torii/entities/useGame";
 import {useDojo} from "../DojoContext";
 import {useQuery} from "@tanstack/react-query";
+import {useComponentValue} from "@dojoengine/react";
+import {getEntityIdFromKeys} from "@dojoengine/utils";
 
 const Timer = () => {
 
   const {
     setup: {
       network: { provider },
-      systemCalls: { reset }
+      systemCalls: { reset },
+      components: { Game }
     },
     account: { account }
   } = useDojo()
 
-  const gameQuery = useGame(GAME_ID)
-  const game = gameQuery.data
+  const game = useComponentValue(Game, getEntityIdFromKeys([BigInt(GAME_ID)]))
   const [remainingTime, setRemainingTime] = React.useState<number>(0)
 
   const gameStatus = game?.state ?? 0
   const canTimerRun = gameStatus === STATE_COMMIT_1
 
-  const startedTimestamp = game?.startedTimestamp ?? 0
+  const startedTimestamp = game?.started_timestamp ?? 0
   const endTime = startedTimestamp === 0 ? 0 : startedTimestamp + GAME_MAX_DURATION
 
   const timeDifferenceQuery = useQuery(
@@ -45,7 +46,6 @@ const Timer = () => {
     const interval = setInterval( () => {
       const currentTime = Math.floor(Date.now() / 1000) - offSet
       const timeDifference = endTime - currentTime
-      console.log({timeDifference, endTime, currentTime})
 
       if (timeDifference > 0) {
         setRemainingTime(timeDifference)
@@ -59,7 +59,7 @@ const Timer = () => {
     return () => {
       clearInterval(interval)
     }
-  }, [reset, endTime, canTimerRun, offSet])
+  }, [account, reset, endTime, canTimerRun, offSet])
 
   return (
     <p className={'text-option-2 text-[18px] font-noto'}>Time's up in {canTimerRun ? remainingTime : 0}...</p>

@@ -1,4 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
 import { print } from 'graphql'
 import gql from 'graphql-tag';
@@ -371,7 +373,7 @@ export type SystemEdge = {
 export type GetEntitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEntitiesQuery = { __typename?: 'Query', entities?: { __typename?: 'EntityConnection', edges?: Array<{ __typename?: 'EntityEdge', node?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, components?: Array<{ __typename: 'Game', game_id?: any | null, player1?: any | null, player1_commit?: any | null, player1_hash?: any | null, player2?: any | null, player2_commit?: any | null, player2_hash?: any | null, started_timestamp?: any | null, state?: any | null, winner?: any | null } | { __typename: 'Player', wins?: any | null } | null> | null } | null } | null> | null } | null };
+export type GetEntitiesQuery = { __typename?: 'Query', entities?: { __typename?: 'EntityConnection', edges?: Array<{ __typename?: 'EntityEdge', node?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, components?: Array<{ __typename: 'Game', game_id?: any | null, player1?: any | null, player1_commit?: any | null, player1_hash?: any | null, player2?: any | null, player2_commit?: any | null, player2_hash?: any | null, started_timestamp?: any | null, state?: any | null, winner?: any | null } | { __typename: 'Player', id?: any | null, wins?: any | null } | null> | null } | null } | null> | null } | null };
 
 
 export const GetEntitiesDocument = gql`
@@ -396,6 +398,7 @@ export const GetEntitiesDocument = gql`
             winner
           }
           ... on Player {
+            id
             wins
           }
         }
@@ -412,6 +415,8 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 const GetEntitiesDocumentString = print(GetEntitiesDocument);
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     getEntities(variables?: GetEntitiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: GetEntitiesQuery; extensions?: any; headers: Dom.Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<GetEntitiesQuery>(GetEntitiesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getEntities', 'query');
     }

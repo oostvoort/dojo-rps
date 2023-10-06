@@ -3,7 +3,6 @@ import {GAME_ID} from "../global/constants";
 import {getEntityIdFromKeys} from "@dojoengine/utils";
 import {useComponentValue} from "@dojoengine/react";
 import {useDojo} from "../DojoContext";
-import {convertToDecimal} from "../global/utils";
 
 const StatsPanel = () => {
   const {
@@ -18,8 +17,9 @@ const StatsPanel = () => {
 
   const entityId = getEntityIdFromKeys([BigInt(GAME_ID)])
   const game = useComponentValue(Game, entityId)
-  const player1 = useComponentValue(Player, getEntityIdFromKeys([BigInt(convertToDecimal(game?.player1?.toString() ?? "0x0"))]))
-  const player2 = useComponentValue(Player, getEntityIdFromKeys([BigInt(convertToDecimal(game?.player2?.toString() ?? "0x0"))]))
+  const player1EntityId = getEntityIdFromKeys([BigInt(game?.player1 ?? "0x0")])
+  const player1 = useComponentValue(Player, player1EntityId)
+  const player2 = useComponentValue(Player, getEntityIdFromKeys([BigInt(game?.player2 ?? "0x0")]))
 
   return (
     <>
