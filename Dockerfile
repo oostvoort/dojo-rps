@@ -1,6 +1,7 @@
 FROM node:18-alpine as web_node_deps
 
 WORKDIR /app
+COPY /web/patches ./patches
 COPY /web/package.json ./package.json
 COPY /web/yarn.lock ./yarn.lock
 
@@ -16,12 +17,12 @@ COPY --from=web_node_deps /app/node_modules ./node_modules
 # Build the webapp
 RUN yarn build --mode production
 
-FROM oostvoort/dojo:v0.2.1 AS contracts_builder
+FROM oostvoort/dojo:v0.2.2 AS contracts_builder
 WORKDIR /app
 COPY /contracts .
 RUN sozo build
 
-FROM oostvoort/dojo-forkserver:v1.0.3 AS runtime
+FROM oostvoort/dojo-forkserver:v1.1.6 AS runtime
 
 WORKDIR /opt
 COPY --from=contracts_builder /app/target ./contracts/target/

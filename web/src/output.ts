@@ -32,6 +32,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
+          id: RecsType.Number,
           wins: RecsType.Number,
         },
         {

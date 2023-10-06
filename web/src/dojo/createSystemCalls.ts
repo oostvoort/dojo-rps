@@ -1,33 +1,31 @@
 import { SetupNetworkResult } from "./setupNetwork";
 import {PAPER, ROCK, SCISSORS} from "../global/constants";
+import {Account} from "starknet";
 
 
 export function createSystemCalls(
-    { execute, syncWorker }: SetupNetworkResult,
+    { execute }: SetupNetworkResult,
 ) {
-    const create = async () => {
-        const tx = await execute("create", []);
-        await syncWorker.sync(tx.transaction_hash);
+    const create = async (signer: Account) => {
+        return await execute(signer, "create", []);
     };
 
-    const commit = async (gameId: number, hashedCommit: bigint) => {
-        const tx = await execute("commit", [gameId, hashedCommit]);
-        await syncWorker.sync(tx.transaction_hash);
+    const commit = async (signer: Account, gameId: number, hashedCommit: bigint) => {
+        return await execute(signer, "commit", [gameId, hashedCommit]);
     };
 
     const reveal = async (
+      signer: Account,
       gameId: number,
       hashedCommit: bigint,
       commit: typeof ROCK | typeof PAPER | typeof SCISSORS,
       salt: number
     ) => {
-        const tx = await execute("reveal", [gameId, hashedCommit, commit, salt]);
-        await syncWorker.sync(tx.transaction_hash);
+        return await execute(signer, "reveal", [gameId, hashedCommit, commit, salt]);
     };
 
-    const reset = async (gameId: number) => {
-        const tx = await execute("reset", [gameId]);
-        await syncWorker.sync(tx.transaction_hash);
+    const reset = async (signer: Account, gameId: number) => {
+        return await execute(signer, "reset", [gameId]);
     };
 
     return {
