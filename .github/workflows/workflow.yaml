@@ -99,19 +99,26 @@ jobs:
   test:
     needs: [helmRelease]
     runs-on: ubuntu-latest
-    container:
-      image: argoproj/argocd:latest
     steps:
-
-      - name: Set Workspace Ownership
-        run: chown -R $(id -u):$(id -g) "${GITHUB_WORKSPACE}"
-
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
 
       - name: Lint Helm Chart         
         run: |       
           helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
+
+      - name: Install ArgoCD CLI if not exists
+        run: |
+          if ! command -v argocd &> /dev/null; then
+            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+            chmod +x /usr/local/bin/argocd
+          fi          
 
       - name: Deploy Application Dry Run
         env:
@@ -135,15 +142,16 @@ jobs:
   deploy:
     needs: [build, helmRelease, test]
     runs-on: ubuntu-latest
-    container:
-      image: argoproj/argocd
     steps:
-
-      - name: Set Workspace Ownership
-        run: chown -R $(id -u):$(id -g) "${GITHUB_WORKSPACE}"
-              
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install ArgoCD CLI if not exists
+        run: |
+          if ! command -v argocd &> /dev/null; then
+            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+            chmod +x /usr/local/bin/argocd
+          fi
 
       - name: Deploy Application Dry Run
         env:
