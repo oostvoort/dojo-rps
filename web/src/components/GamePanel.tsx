@@ -7,21 +7,25 @@ import useGameStatus from "../hooks/useGameStatus";
 import Timer from "./Timer";
 import ChoiceSelector from "./ChoiceSelector";
 import StatsPanel from "./StatsPanel";
-import useGame from "../hooks/torii/entities/useGame";
+import {useComponentValue} from "@dojoengine/react";
+import {getEntityIdFromKeys} from "@dojoengine/utils";
 
 export default function GamePanel() {
     const {
-        network: { signer }
+        setup: { components: { Game }},
+        account: {account}
     } = useDojo()
 
+    const entityId = getEntityIdFromKeys([BigInt(GAME_ID)])
+    const game = useComponentValue(Game, entityId)
 
-    const gameQuery = useGame(GAME_ID)
-    const game = gameQuery.data
+    // autogenerate thinks addresses are numbers and not strings
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const isUserPlayer1 = game?.player1 === account.address
 
-    const isUserPlayer1 = game?.player1.address === signer.address
-
-    const player1Choice = game?.player1.commit ?? 0
-    const player2Choice = game?.player2.commit ?? 0
+    const player1Choice = game?.player1_commit ?? 0
+    const player2Choice = game?.player2_commit ?? 0
 
     const opponentChoice = isUserPlayer1 ? player2Choice : player1Choice
 
