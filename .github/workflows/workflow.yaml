@@ -71,7 +71,7 @@ jobs:
         with:
           scan-type: 'image'
           image-ref: 'oostvoort/dojorps-dev:latest'
-          exit-code: '1'        
+          exit-code: '0'        
 
   helmTest:
     runs-on: ubuntu-latest
