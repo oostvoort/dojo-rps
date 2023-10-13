@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  build_and_push:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -62,20 +62,6 @@ jobs:
           docker push $REGISTRY/$PROJECTNAME-dev:latest
           docker push $REGISTRY/$PROJECTNAME-dev:${VERSION}
 
-      - name: Deploy to ArgoCD
-        id: deploy-image
-        run: |
-          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
-          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}
-          wget https://github.com/argoproj/argo-cd/releases/download/v2.8.3/argocd-linux-amd64 -O argocd
-          chmod +x argocd
-          sudo mv argocd /usr/local/bin
-
-          argocd app create $PROJECTNAME-dev --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
-          argocd app sync $PROJECTNAME-dev
-          argocd app wait $PROJECTNAME-dev
-
-
   helmRelease:
     runs-on: ubuntu-latest
     steps:
@@ -108,3 +94,29 @@ jobs:
           skip_packaging: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+
+  test:
+    runs-on: alpine/helm
+    steps:
+      - name: Lint Helm Chart         
+        run: |
+          helm lint ./chart/$PROJECTNAME
+
+      - name: Test Helm Deployment
+        run: |
+          helm install --dry-run --debug test-deployment ./chart/$PROJECTNAME --values=values-dev.yaml
+
+            
+  deploy:
+    needs: [build, helmRelease, test]
+    runs-on: argoproj/argocd
+    steps:
+      - name: Deploy to ArgoCD
+        id: deploy-image
+        run: |
+          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
+          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}
+          argocd app create $PROJECTNAME-dev --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
+          argocd app sync $PROJECTNAME-dev
+          argocd app wait $PROJECTNAME-dev
