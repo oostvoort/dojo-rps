@@ -120,12 +120,12 @@ jobs:
             chmod +x /usr/local/bin/argocd
           fi          
 
-      - name: Deploy Application Dry Run
+      - name: Dry run pre-deployment
         env:
           ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
         run: |
-           argocd app create $PROJECTNAME-dev \
+           argocd app manifest $PROJECTNAME-dev \
              --dry-run \
              --repo https://oostvoort.github.io/dojo-rps/ \
              --path chart/  \
