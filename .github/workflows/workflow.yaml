@@ -100,32 +100,57 @@ jobs:
     needs: [helmRelease]
     runs-on: ubuntu-latest
     container:
-      image: argoproj/argocd   
+      image: argoproj/argocd:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Lint Helm Chart         
-        run: |
-          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
-          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}        
+        run: |       
           helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
-      - name: Test Helm Deployment
-        run: |
-          argocd app create $PROJECTNAME-dev --dry-run --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
 
-            
+      - name: Deploy Application Dry Run
+        env:
+          ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
+        run: |
+           argocd app create $PROJECTNAME-dev \
+             --dry-run \
+             --repo https://oostvoort.github.io/dojo-rps/ \
+             --path chart/  \
+             --revision ${VERSION:1} \
+             --helm-chart dojorps \
+             --dest-namespace $PROJECTNAME-dev \
+             --dest-server https://kubernetes.default.svc \
+             --values values-dev.yaml \
+             --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} \
+             --upsert \
+             --server $ARGOCD_SERVER \
+             --auth-token $ARGOCD_AUTH_TOKEN                 
+     
   deploy:
     needs: [build, helmRelease, test]
     runs-on: ubuntu-latest
     container:
       image: argoproj/argocd
     steps:
-      - name: Deploy to ArgoCD
-        id: deploy-image
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy Application Dry Run
+        env:
+          ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
         run: |
-          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
-          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}
-          argocd app create $PROJECTNAME-dev --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
-          argocd app sync $PROJECTNAME-dev
-          argocd app wait $PROJECTNAME-dev
+          argocd app create $PROJECTNAME-dev \
+            --repo https://oostvoort.github.io/dojo-rps/ \
+            --path chart/  \
+            --revision ${VERSION:1} \
+            --helm-chart dojorps \
+            --dest-namespace $PROJECTNAME-dev \
+            --dest-server https://kubernetes.default.svc \
+            --values values-dev.yaml \
+            --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} \
+            --upsert \
+            --server $ARGOCD_SERVER \
+            --auth-token $ARGOCD_AUTH_TOKEN 
