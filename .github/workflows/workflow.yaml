@@ -105,7 +105,7 @@ jobs:
 
       - name: Test Helm Deployment
         run: |
-          helm install --dry-run --debug test-deployment ./chart/$PROJECTNAME --values=values-dev.yaml
+          helm install --dry-run --debug test-deployment ./chart/$PROJECTNAME --values=values-dev.yaml 
 
             
   deploy:
