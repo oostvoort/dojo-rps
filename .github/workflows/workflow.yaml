@@ -97,6 +97,7 @@ jobs:
 
 
   test:
+    needs: [helmRelease]
     runs-on: ubuntu-latest
     container:
       image: alpine/helm:latest    
@@ -109,7 +110,7 @@ jobs:
           helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
       - name: Test Helm Deployment
         run: |
-          helm upgrade --install --dry-run --debug test --namespace=test-namespace ./chart/dojorps --values ./chart/dojorps/values-dev.yaml
+          argocd app create $PROJECTNAME-dev --dry-run --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
 
             
   deploy:
