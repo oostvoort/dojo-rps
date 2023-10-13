@@ -100,13 +100,15 @@ jobs:
     needs: [helmRelease]
     runs-on: ubuntu-latest
     container:
-      image: alpine/helm:latest    
+      image: argoproj/argocd   
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Lint Helm Chart         
         run: |
+          export ARGOCD_SERVER=${{ vars.ARGOCD_SERVER }}
+          export ARGOCD_AUTH_TOKEN=${{ secrets.ARGOCD_AUTH_TOKEN }}        
           helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
       - name: Test Helm Deployment
         run: |
