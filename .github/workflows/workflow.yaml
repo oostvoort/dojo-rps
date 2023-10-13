@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  buildImage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -62,6 +62,17 @@ jobs:
           docker push $REGISTRY/$PROJECTNAME-dev:latest
           docker push $REGISTRY/$PROJECTNAME-dev:${VERSION}
 
+  testImage:
+    needs: [buildImage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: '$REGISTRY/$PROJECTNAME-dev:${VERSION}'
+          exit-code: '1'        
+
   helmRelease:
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +107,7 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
 
-  test:
+  helmTest:
     needs: [helmRelease]
     runs-on: ubuntu-latest
     steps:
@@ -119,27 +130,10 @@ jobs:
             curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
             chmod +x /usr/local/bin/argocd
           fi          
-
-      # - name: Dry run pre-deployment
-      #   env:
-      #     ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
-      #     ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
-      #   run: |
-      #      argocd app manifest $PROJECTNAME-dev \
-      #        --repo https://oostvoort.github.io/dojo-rps/ \
-      #        --path chart/  \
-      #        --revision ${VERSION:1} \
-      #        --helm-chart dojorps \
-      #        --dest-namespace $PROJECTNAME-dev \
-      #        --dest-server https://kubernetes.default.svc \
-      #        --values values-dev.yaml \
-      #        --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} \
-      #        --upsert \
-      #        --server $ARGOCD_SERVER \
-      #        --auth-token $ARGOCD_AUTH_TOKEN                 
+           
      
   deploy:
-    needs: [build, helmRelease, test]
+    needs: [buildImage, testImage, helmRelease, helmTest]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -169,3 +163,6 @@ jobs:
             --upsert \
             --server $ARGOCD_SERVER \
             --auth-token $ARGOCD_AUTH_TOKEN 
+          argocd app sync $PROJECTNAME-dev
+          argocd app wait $PROJECTNAME-dev
+          
