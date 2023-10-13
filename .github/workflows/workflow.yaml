@@ -97,7 +97,9 @@ jobs:
 
 
   test:
-    runs-on: alpine/helm
+    runs-on: ubuntu-latest
+    container:
+      image: alpine/helm:latest    
     steps:
       - name: Lint Helm Chart         
         run: |
@@ -110,7 +112,9 @@ jobs:
             
   deploy:
     needs: [build, helmRelease, test]
-    runs-on: argoproj/argocd
+    runs-on: ubuntu-latest
+    container:
+      image: argoproj/argocd
     steps:
       - name: Deploy to ArgoCD
         id: deploy-image
