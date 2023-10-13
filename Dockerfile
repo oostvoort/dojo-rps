@@ -17,12 +17,12 @@ COPY --from=web_node_deps /app/node_modules ./node_modules
 # Build the webapp
 RUN yarn build --mode production
 
-FROM oostvoort/dojo:v0.2.2 AS contracts_builder
+FROM oostvoort/dojo:v0.2.3 AS contracts_builder
 WORKDIR /app
 COPY /contracts .
 RUN sozo build
 
-FROM oostvoort/dojo-forkserver:v1.1.6 AS runtime
+FROM oostvoort/dojo-forkserver:v1.1.21 AS runtime
 
 WORKDIR /opt
 COPY --from=contracts_builder /app/target ./contracts/target/
