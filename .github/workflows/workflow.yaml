@@ -103,7 +103,7 @@ jobs:
     steps:
       - name: Lint Helm Chart         
         run: |
-          helm lint ./chart/dojorps --values ./chart/dojorps/values-dev.yaml
+          helm lint ./chart/dojorps
       - name: Test Helm Deployment
         run: |
           helm upgrade --install --dry-run --debug test --namespace=test-namespace ./chart/dojorps --values ./chart/dojorps/values-dev.yaml
