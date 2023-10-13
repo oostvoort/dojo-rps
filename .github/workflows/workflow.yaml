@@ -69,11 +69,32 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
+          REGISTRY: ${{ env.REGISTRY }}
+          PROJECTNAME: ${{ env.PROJECTNAME }}
+          VERSION: ${{ env.VERSION }}
+            
           scan-type: 'image'
           image-ref: '$REGISTRY/$PROJECTNAME-dev:${VERSION}'
           exit-code: '1'        
 
+  helmTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      - name: Lint Helm Chart         
+        run: |       
+          helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
+
   helmRelease:
+    needs: [helmTest]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -107,33 +128,10 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
 
-  helmTest:
-    needs: [helmRelease]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Install Helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-
-      - name: Lint Helm Chart         
-        run: |       
-          helm lint --values ./chart/dojorps/values-dev.yaml ./chart/dojorps
-
-      - name: Install ArgoCD CLI if not exists
-        run: |
-          if ! command -v argocd &> /dev/null; then
-            curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-            chmod +x /usr/local/bin/argocd
-          fi          
-           
      
   deploy:
-    needs: [buildImage, testImage, helmRelease, helmTest]
+    needs: [testImage, buildImage, helmRelease, helmTest]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
