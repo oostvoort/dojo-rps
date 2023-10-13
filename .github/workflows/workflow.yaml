@@ -120,23 +120,23 @@ jobs:
             chmod +x /usr/local/bin/argocd
           fi          
 
-      - name: Dry run pre-deployment
-        env:
-          ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
-          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
-        run: |
-           argocd app manifest $PROJECTNAME-dev \
-             --repo https://oostvoort.github.io/dojo-rps/ \
-             --path chart/  \
-             --revision ${VERSION:1} \
-             --helm-chart dojorps \
-             --dest-namespace $PROJECTNAME-dev \
-             --dest-server https://kubernetes.default.svc \
-             --values values-dev.yaml \
-             --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} \
-             --upsert \
-             --server $ARGOCD_SERVER \
-             --auth-token $ARGOCD_AUTH_TOKEN                 
+      # - name: Dry run pre-deployment
+      #   env:
+      #     ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
+      #     ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
+      #   run: |
+      #      argocd app manifest $PROJECTNAME-dev \
+      #        --repo https://oostvoort.github.io/dojo-rps/ \
+      #        --path chart/  \
+      #        --revision ${VERSION:1} \
+      #        --helm-chart dojorps \
+      #        --dest-namespace $PROJECTNAME-dev \
+      #        --dest-server https://kubernetes.default.svc \
+      #        --values values-dev.yaml \
+      #        --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} \
+      #        --upsert \
+      #        --server $ARGOCD_SERVER \
+      #        --auth-token $ARGOCD_AUTH_TOKEN                 
      
   deploy:
     needs: [build, helmRelease, test]
