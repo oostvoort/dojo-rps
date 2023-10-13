@@ -65,14 +65,14 @@ jobs:
   testImage:
     needs: [buildImage]
     runs-on: ubuntu-latest
+    env:
+      PROJECTNAME: dojorps
+      REGISTRY: ${{ vars.DOCKERHUB_USERNAME}}
+      VERSION: ${{github.ref_name}}
     steps:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          REGISTRY: ${{ env.REGISTRY }}
-          PROJECTNAME: ${{ env.PROJECTNAME }}
-          VERSION: ${{ env.VERSION }}
-            
           scan-type: 'image'
           image-ref: '$REGISTRY/$PROJECTNAME-dev:${VERSION}'
           exit-code: '1'        
@@ -131,7 +131,7 @@ jobs:
 
      
   deploy:
-    needs: [testImage, buildImage, helmRelease, helmTest]
+    needs: [testImage, helmRelease]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
