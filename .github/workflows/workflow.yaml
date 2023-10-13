@@ -71,7 +71,7 @@ jobs:
           chmod +x argocd
           sudo mv argocd /usr/local/bin
 
-          argocd app create $PROJECTNAME-dev --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace default --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
+          argocd app create $PROJECTNAME-dev --repo https://oostvoort.github.io/dojo-rps/ --path chart/  --revision ${VERSION:1} --helm-chart dojorps --dest-namespace $PROJECTNAME-dev --dest-server https://kubernetes.default.svc --values values-dev.yaml --helm-set-string dockerImage=oostvoort/dojorps-dev:${VERSION} --upsert
           argocd app sync $PROJECTNAME-dev
           argocd app wait $PROJECTNAME-dev
 
