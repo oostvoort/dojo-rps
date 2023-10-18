@@ -18,7 +18,6 @@ https://dojorps.dev.aw.oostvoort.work/
 https://katana.dojorps.dev.aw.oostvoort.work/
 https://torii.dojorps.dev.aw.oostvoort.work/
 
-
 ## Playing online
 Dojo Rock Paper Scissors can be accessed via this [website](https://dojorps.dev.aw.oostvoort.work/). To play
 as Player 1, use this [link](https://dojorps.dev.aw.oostvoort.work/?account=1). Conversely, to play
