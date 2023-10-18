@@ -152,17 +152,15 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
         run: |
           argocd app create $PROJECTNAME \
-            --repo https://oostvoort.github.io/dojo-rps/ \
-            --path chart/ \            
-            --revision ${VERSION:1} \            
-            --helm-chart dojorps \
-            --dest-namespace dojorps-dev  \
-            --dest-server https://kubernetes.default.svc \            
-            --values values-dev.yaml \
-            --helm-set-string dockerImage=oostvoort/$PROJECTNAME-dev:${VERSION} \            
-            --upsert \
-            --server $ARGOCD_SERVER \
-            --auth-token $ARGOCD_AUTH_TOKEN                              
+          --repo https://oostvoort.github.io/dojo-rps/ \
+          --path chart/  \
+          --revision ${VERSION:1} \
+          --helm-chart $PROJECTNAME \
+          --dest-namespace $PROJECTNAME-dev \
+          --dest-server https://kubernetes.default.svc \
+          --values values-dev.yaml \
+          --helm-set-string dockerImage=oostvoort/$PROJECTNAME-dev:${VERSION} \
+          --upsert                            
           argocd app sync $PROJECTNAME-dev
           argocd app wait $PROJECTNAME-dev
   
