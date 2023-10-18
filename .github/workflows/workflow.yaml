@@ -152,10 +152,9 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}   
         run: |
           argocd app create $PROJECTNAME-dev \
-            --repo https://github.com/$GITHUB_REPOSITORY.git \
-            --path ./chart/$PROJECTNAME \            
+            --repo https://oostvoort.github.io/dojo-rps/ \
+            --path /chart \            
             --revision ${VERSION:1} \            
-            --revision $GITHUB_REF_NAME \
             --helm-chart $PROJECTNAME \
             --values values-dev.yaml \
             --dest-namespace $PROJECTNAME-dev  \
