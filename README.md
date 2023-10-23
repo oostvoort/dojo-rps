@@ -107,6 +107,52 @@ cd web
 yarn dev
 ````
 
+#### Deploying in Cloud (AWS-Fargate)
+
+##### Step 1: Install Terraform-cli and awscli
+Install AWS cli
+````shell
+curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+````
+Install Terraform cli
+````shell
+wget https://releases.hashicorp.com/terraform/1.0.8/terraform_1.0.8_linux_amd64.zip
+unzip terraform_1.0.8_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+terraform -v
+````
+##### Step 2: Add you AWS credentials
+Just make sure you have enough role or permission to create S3 Bucket, VPC other networking components, and lastly ECS permissions
+````shell
+aws configure
+    AWS Access Key ID:
+    AWS Secret Access Key:
+````
+
+##### Step 3: Run Terraform
+We have our own centralized terraform repository, for easier deployment just use default variabiables but feel free to edit them
+````shell
+cd terraform
+terraform init
+terraform apply --auto-approve 
+````
+
+##### Step 4: Destroy the AWS services
+Once you are done with the application, make sure to destroy all the AWS services
+````shell
+terraform destroy --auto-approve 
+````
+
+
+
+
+
+
+
+
 ###### Note
 To switch between Player 1 and 2, use the account query like so:
 ````console
