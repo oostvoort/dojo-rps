@@ -139,8 +139,22 @@ cd terraform
 terraform init
 terraform apply --auto-approve 
 ````
+##### Step 4: Visit the application
+1. Navigate in AWS User Interface, then in the search box type 'Elastic Container Service'
 
-##### Step 4: Destroy the AWS services
+![Elastic Container Service](image.png)
+
+2. Click the cluster
+3. Click Tasks Tab
+4. Click Task or Fargate Container
+
+![Task](image-1.png)
+
+5. Click Network bindings, and in here you'll see the IP address + ports of the application which you can visit
+
+![Network Bindigs](image-2.png)
+
+##### Step 5: Destroy the AWS services
 Once you are done with the application, make sure to destroy all the AWS services
 ````shell
 terraform destroy --auto-approve 
