@@ -148,12 +148,12 @@ terraform apply --auto-approve
 3. Click Tasks Tab
 4. Click Task or Fargate Container
 
-![Task](image-1.png)
+![Task](image-3.png)
+
 
 5. Click Network bindings, and in here you'll see the IP address + ports of the application which you can visit
 
-![Network Bindigs](image-2.png)
-
+![Network Bindigs](image-1.png)
 ##### Step 5: Destroy the AWS services
 Once you are done with the application, make sure to destroy all the AWS services
 ````shell
